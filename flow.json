@@ -1,0 +1,21 @@
+{
+	"emulators": {
+		"default": {
+			"port": 3569,
+			"serviceAccount": "emulator-account"
+		}
+	},
+	"contracts": {},
+	"networks": {
+		"emulator": "127.0.0.1:3569",
+		"mainnet": "https://rest-mainnet.onflow.org",
+		"testnet": "https://rest-testnet.onflow.org"
+	},
+	"accounts": {
+		"emulator-account": {
+			"address": "f8d6e0586b0a20c7",
+			"key": "058e8718eac041061c62db9b7a669d48047f07351294f574c60b7b3ef5c58674"
+		}
+	},
+	"deployments": {}
+}
