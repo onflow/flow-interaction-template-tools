@@ -1,8 +1,11 @@
 import inquirer from "inquirer"
-import {File} from "../utils/read-files"
+import chalk from "chalk"
+import {CliUx} from '@oclif/core'
 import * as fcl from "@onflow/fcl"
-import {logger} from "../utils/logger"
+import {logger} from "../../utils/logger"
 import crypto from "crypto"
+import {File} from "../../utils/file/read-files"
+import {iTemplateMonad} from "../../utils/template/template-monad"
 
 async function inputAddressForNetwork(file: File, address: string, network: string): Promise<string> {
     return inquirer.prompt([
@@ -60,23 +63,28 @@ interface iAddressMemo {
 }
 
 interface iPins {
-    [network: string]: any
+    [importPlaceholder: string]: any
 }
 
-export async function generatePins(file: File, flowJSON: any): Promise<iPins> {
+export async function generatePins(templateMonad: iTemplateMonad): Promise<iTemplateMonad> {
+    logger.default("\n🌱 Generating dependency pins\n")
+
+    let file: File = templateMonad.file
+
     let addressMemo: iAddressMemo = {
         testnet: {},
         mainnet: {},
         emulator: {},
     }
 
-    let pins: iPins = {
-        testnet: null,
-        mainnet: null,
-        emulator: null,
-    }
+    let pins: iPins = {}
 
     let iports: iport[] = findImports(file?.content, true)
+
+    if (iports.length === 0) return ({
+        ...templateMonad,
+        dependencies: pins
+    })
 
     let networks = ["testnet", "mainnet", "emulator"]
 
@@ -99,7 +107,11 @@ export async function generatePins(file: File, flowJSON: any): Promise<iPins> {
 
         logger.default(`🌱 Generating dependency pin for ${network}...`)
 
-        for (const iport of iports) {
+        let networkIports: iport[] = iports.map(iport => ({
+            ...iport
+        }))
+
+        for (const iport of networkIports) {
             if (!(addressMemo?.[network]?.[iport?.addressPlaceholder!])) {
                 const addr = await inputAddressForNetwork(file, iport?.addressPlaceholder!, network)
                 addressMemo[network][iport?.addressPlaceholder!] = addr
@@ -107,35 +119,58 @@ export async function generatePins(file: File, flowJSON: any): Promise<iPins> {
             iport.address = addressMemo[network][iport?.addressPlaceholder!]
         }
 
-        const accessNodeAPI = flowJSON?.networks?.[network]
+        const accessNodeAPI = templateMonad?.flowJSON?.networks?.[network]
         await fcl.config().put("accessNode.api", accessNodeAPI)
 
         let latestSealedBlock = await fcl.block({ sealed: true })
         let latestBlockPin = latestSealedBlock?.height
 
-        for (const iport of iports) {
-            let account = await fcl.send([
-                fcl.getAccount(iport.address!),
-                fcl.atBlockHeight(latestBlockPin)
-            ]).then(fcl.decode)
+        for (const networkIport of networkIports) {
+            CliUx.ux.action.start(chalk.whiteBright.bold(`🌱 Generating dependency pin for ${networkIport.addressPlaceholder} on ${network}`))
 
-            iport.contract = account.contracts?.[iport.contractName]
+            let horizon: iport[] = [{
+                ...networkIport
+            }]
 
-            let contractIports: iport[] = findImports(iport.contract!, false)
+            let contractHashesJoined = ""
+            for (const horizonIport of horizon) {
 
-            iports.push(...contractIports)
-        }
+                let account = await fcl.send([
+                    fcl.getAccount(horizonIport.address!),
+                    fcl.atBlockHeight(latestBlockPin)
+                ]).then(fcl.decode)
+    
+                horizonIport.contract = account.contracts?.[horizonIport.contractName]
+    
+                let contractIports: iport[] = findImports(horizonIport.contract!, false)
+    
+                horizon.push(...contractIports)
+            }
 
-        let contractHashes = iports.map(iport => {
-            return crypto.createHash("sha256").update(iport.contract!).digest("hex")
-        })
-        let contractHashesJoined = contractHashes.join("") 
-        
-        pins[network] = {
-            pin: crypto.createHash("sha256").update(contractHashesJoined).digest("hex"),
-            pin_block_height: latestBlockPin
+            let contractHashes = horizon.map(iport => {
+                return crypto.createHash("sha256").update(iport.contract!).digest("hex")
+            })
+            contractHashesJoined = contractHashes.join("") 
+
+            pins[networkIport.addressPlaceholder!] = {
+                ...pins[networkIport.addressPlaceholder!],
+                [network]: {
+                    address: networkIport.address!,
+                    contract: networkIport.contractName!,
+                    fq_address: `A.${networkIport.address!}.${networkIport.contractName!}`,
+                    pin: crypto.createHash("sha256").update(contractHashesJoined).digest("hex"),
+                    pin_block_height: latestBlockPin    
+                }
+            }
+    
+            CliUx.ux.action.stop(chalk.whiteBright.bold("Generated!"))
         }
     }
 
-    return pins
+    // console.log("PINs", JSON.stringify(pins, null, 2))
+
+    return {
+        ...templateMonad,
+        dependencies: pins
+    }
 }

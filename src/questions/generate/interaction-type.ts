@@ -1,12 +1,18 @@
 import inquirer from "inquirer"
-import {File} from "../utils/read-files"
+import {File} from "../../utils/file/read-files"
+import {iTemplateMonad} from "../../utils/template/template-monad"
+import {logger} from "../../utils/logger"
 
-export async function question(file: File): Promise<string> {
+export async function question(templateMonad: iTemplateMonad): Promise<iTemplateMonad> {
+    logger.default("\n🌱 Collecting interaction type\n")
+
+    let file: File = templateMonad.file
+    
     let detectedScript = file.content.match(/pub fun main/g)
     let detectedTransaction = !detectedScript && file.content.match(/transaction/g)
 
     let type: string = ""
-    return inquirer.prompt([
+    await inquirer.prompt([
         {
             type: 'list',
             message: `[${file?.path}] Select the type of interaction:`,
@@ -32,6 +38,10 @@ export async function question(file: File): Promise<string> {
         }
     ]).then(answers => {
         type = answers.type
-        return type
     })
+
+    return {
+        ...templateMonad,
+        type
+    }
 }

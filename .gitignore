@@ -5,6 +5,7 @@
 /lib
 /package-lock.json
 /tmp
+/cdc
 /yarn.lock
 node_modules
 oclif.manifest.json

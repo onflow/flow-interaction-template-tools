@@ -1,4 +1,5 @@
 import crypto from "crypto"
+import { iTemplateMonad } from "./template-monad"
 
 const template = `{
     "f_type": "InteractionTemplate",
@@ -38,7 +39,7 @@ export function generateTemplate({
     cadence,
     dependencies,
     args,
-}: iGenerateTemplate) {
+}: iTemplateMonad) {
     let template = genTemplate()
     template.data.type = type
     template.data.interface = iface
@@ -46,7 +47,7 @@ export function generateTemplate({
     template.data.version = version
     template.data.messages = messages
     template.data.cadence = cadence
-    template.dependencies = dependencies
+    template.data.dependencies = dependencies
     template.data.arguments = args
 
     template.id = crypto.createHash("sha256").update(JSON.stringify(template)).digest("hex")

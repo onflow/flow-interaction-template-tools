@@ -1,5 +1,5 @@
 import inquirer from "inquirer"
-import {File} from "../utils/read-files"
+import {File} from "../../utils/file/read-files"
 
 export async function question(files: File[]) {
     if (files.length > 1) {

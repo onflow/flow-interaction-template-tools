@@ -221,7 +221,7 @@ export namespace currentUser {
  * @see {@link https://github.com/onflow/fcl-js/blob/master/packages/fcl/src/wallet-provider-spec/draft-v2.md#compositesignature}
  */
 export interface CompositeSignature {
-    f_type: 'CompositeSignature';
+    f_type: string;
     f_vsn: string;
     addr: Address;
     keyId: number;
@@ -325,6 +325,8 @@ export interface MutateOptions {
 export function mutate(options: MutateOptions): Promise<string>;
 
 export interface CompositeSignatures {
+    f_type: string;
+    f_vsn: string;
     addr: Address;
     keyId: string;
     signature: string;
@@ -841,6 +843,9 @@ export interface KeyObject {
      * An index referring to one of SHA2_256 or SHA3_256
      */
     hashAlgo: Hash;
+
+    signAlgoString: string,
+    hashAlgoString: string,
     /**
      * A number between 1 and 1000 indicating the relative weight to other keys on the account.
      */

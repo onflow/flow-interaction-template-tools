@@ -1,8 +1,15 @@
 import inquirer from "inquirer"
-import {File} from "../utils/read-files"
-import {tags} from "../utils/bcp47-tags"
+import {File} from "../../utils/file/read-files"
+import {tags} from "../../utils/bcp47-tags"
+import {iTemplateMonad} from "../../utils/template/template-monad"
+import {logger} from "../../utils/logger"
 
-export async function question(file: File) {
+export async function question(templateMonad: iTemplateMonad): Promise<iTemplateMonad> {
+    logger.default("\n🌱 Collecting template messages")
+    logger.default("🌱 A title and description are recommended\n")
+
+    let file: File = templateMonad.file
+
     let messages = <any>{}
     let continueGatheringMessages = true
     while (continueGatheringMessages) {
@@ -93,5 +100,10 @@ export async function question(file: File) {
         })
     }
 
-    return messages
+    return ({
+        ...templateMonad,
+        messages: {
+            i18n: messages
+        }
+    })
 }

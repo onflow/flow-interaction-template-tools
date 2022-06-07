@@ -4,17 +4,19 @@ import * as fcl from "@onflow/fcl"
 import { exec } from "child_process"
 import {logger} from "../../utils/logger"
 import {tags} from "../../utils/bcp47-tags"
-import {readFiles, File} from "../../utils/read-files"
-import {writeFile} from "../../utils/write-file"
-import {question as selectCDCFiles} from "../../questions/select-cdc-files"
-import {question as selectInteractionType} from "../../questions/interaction-type"
-import {question as inputInterfaceID} from "../../questions/interface-id"
-import {question as inputMessages} from "../../questions/messages"
-import {question as inputAuthor} from "../../questions/author"
-import {question as inputArguments} from "../../questions/arguments"
-import {question as inputVersion} from "../../questions/version"
-import {generateTemplate} from '../../utils/generate-template'
-import {generatePins} from "../../questions/generate-pins"
+import {readFiles, File} from "../../utils/file/read-files"
+import {writeFile} from "../../utils/file/write-file"
+import {question as selectCDCFiles} from "../../questions/generate/select-cdc-files"
+import {question as selectInteractionType} from "../../questions/generate/interaction-type"
+import {question as inputInterfaceID} from "../../questions/generate/interface-id"
+import {question as inputMessages} from "../../questions/generate/messages"
+import {question as inputAuthor} from "../../questions/generate/author"
+import {question as inputArguments} from "../../questions/generate/arguments"
+import {question as inputVersion} from "../../questions/generate/version"
+import {generateTemplate} from '../../utils/template/generate-template'
+import {generateTemplateMonad, iTemplateMonad} from "../../utils/template/template-monad"
+import {generateSplashTitle} from "../../utils/splashscreen"
+import {generatePins} from "../../questions/generate/generate-pins"
 
 export default class Generate extends Command {
   static description = 'Generate transaction templates from .cdc files.'
@@ -35,6 +37,8 @@ export default class Generate extends Command {
     const {argv, args, flags} = await this.parse(Generate)
     const { path } = args
 
+    generateSplashTitle()
+
     let files: File[] = await readFiles(path)
 
     const flowJSONFiles = await readFiles("flow.json")
@@ -43,8 +47,6 @@ export default class Generate extends Command {
     // If more than one file found, ask which files they want to generate templates for.
     files = await selectCDCFiles(files)
 
-    let lastUsedAuthorAddr;
-
     for (let i = 0; i < files.length; i++) {
       let file = files[i]
 
@@ -52,50 +54,45 @@ export default class Generate extends Command {
       logger.default(file.content)
       logger.default(`----\n`)
 
-      let detectedScript = file.content.match(/pub fun main/g)
-      let detectedTransaction = !detectedScript && file.content.match(/transaction/g)
+      let templateMonad = generateTemplateMonad(file, flowJSON)
 
-      let dependencies = await generatePins(file, flowJSON)
+      let questions = [
+        selectInteractionType,
+        inputMessages,
+        inputArguments,
+        generatePins,
+        inputInterfaceID,
+        inputVersion
+      ]
 
-      let type = await selectInteractionType(file)
+      templateMonad = 
+        await questions.reduce(
+          async (tm, question) => question(await tm), 
+          Promise.resolve(templateMonad)
+        )
 
-      logger.default("\n🌱 Collecting template messages")
-      logger.default("🌱 A title and description are recommended\n")
-      let messages = await inputMessages(file)
+      // let detectedScript = file.content.match(/pub fun main/g)
+      // let detectedTransaction = !detectedScript && file.content.match(/transaction/g)
 
-      logger.default("\n🌱 Collecting argument messages\n")
-      let args = await inputArguments(file)
+      let template = generateTemplate(templateMonad)
 
-      let iface: string = await inputInterfaceID(file)
-      // let author = await inputAuthor(file, flowJSON)
-      // let author = null
-      let cadence = file?.content
+      logger.default("\n🌱 Template: \n\n", JSON.stringify(template, null, 2), "\n")
 
-      let version = await inputVersion(file)
-
-      // let dependencies = null
-
-      let template = generateTemplate({
-        type,
-        iface,
-        // author,
-        version,
-        messages,
-        cadence,
-        dependencies,
-        args,
-      })
-
-      logger.default("\n🌱 Template: ", JSON.stringify(template, null, 2), "\n")
-
-      let filePathParts = file.path.split(".")
+      const filePathLessCDC = 
+        file.path.split(".")
+        .slice(0, file.path.split(".").length - 1)
+        .map(s => s === "" ? "." : s)
+        .join("")
+      let filePathParts = [filePathLessCDC]
       filePathParts.push("template")
       filePathParts.push("json")
       let templateFilePath = filePathParts.join(".")
 
       await writeFile(templateFilePath, JSON.stringify(template, null, 2))
+
+      logger.default(`\n🌱 Saved interaction template to ${templateFilePath}\n`)
     }
-    
-    this.log(`Generate cmd run, path=${argv[0]}`)
+
+    logger.default("\n🌱🎉 Interaction template generation complete!\n")
   }
 }

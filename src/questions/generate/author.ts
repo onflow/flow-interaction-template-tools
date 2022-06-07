@@ -1,7 +1,8 @@
 import inquirer from "inquirer"
 import * as fcl from "@onflow/fcl"
 import {exec} from "child_process"
-import {File} from "../utils/read-files"
+import {File} from "../../utils/file/read-files"
+import {iTemplateMonad} from "../../utils/template/template-monad"
 
 let lastUsedAuthorAddr: string;
 
