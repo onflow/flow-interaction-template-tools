@@ -125,6 +125,7 @@ export async function question(templateMonad: iTemplateMonad): Promise<iTemplate
             messages[arg?.name] = {
                 ...(messages[arg?.name] || {}),
                 index: argIndex,
+                type: arg?.type,
                 messages: {
                     ...(messages[arg?.name]?.messages || {}),
                     [currMessageKey]: {
@@ -155,6 +156,6 @@ export async function question(templateMonad: iTemplateMonad): Promise<iTemplate
 
     return {
         ...templateMonad,
-        messages
+        args: messages
     }
 }

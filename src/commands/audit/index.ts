@@ -91,7 +91,7 @@ export default class Generate extends Command {
         signerSignature: sig
       }
 
-      let audit = generateAudit(auditMonad)
+      let audit = await generateAudit(auditMonad)
 
       logger.default("\n🌱 Audit: \n\n", JSON.stringify(audit, null, 2), "\n")
 

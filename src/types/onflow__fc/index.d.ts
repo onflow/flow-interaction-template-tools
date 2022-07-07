@@ -5,6 +5,18 @@
 
 declare module "@onflow/fcl" {
 
+export namespace InteractionTemplateUtils {
+    
+    function generateDependencyPin(opts: {}): string;
+
+    function generateDependencyPinAtLatestSealedBlock(opts: {}): string
+
+    function generateTemplateId(opts: {}): string
+
+    function verifyInteractionTemplateAudit(opts: {}): string
+
+}
+
 // CONFIGURATION
 export type Environment = 'local' | 'canarynet' | 'testnet' | 'mainnet';
 

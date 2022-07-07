@@ -20,7 +20,7 @@ export const generateTemplateMonad = (file: File, flowJSON?: {[key: string]: any
     iface: "",
     version: "",
     messages: {},
-    cadence: "",
+    cadence: file.content,
     dependencies: {},
     args: {},
 })

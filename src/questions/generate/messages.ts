@@ -84,7 +84,9 @@ export async function question(templateMonad: iTemplateMonad): Promise<iTemplate
             })
         }
 
-        messages[currMessageKey] = messageTranslations
+        messages[currMessageKey] = {
+            i18n: messageTranslations
+        }
 
         await inquirer.prompt([
             {
@@ -102,8 +104,6 @@ export async function question(templateMonad: iTemplateMonad): Promise<iTemplate
 
     return ({
         ...templateMonad,
-        messages: {
-            i18n: messages
-        }
+        messages
     })
 }

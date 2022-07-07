@@ -1,4 +1,5 @@
 import crypto from "crypto"
+import * as fcl from "@onflow/fcl"
 import { iTemplateMonad } from "./template-monad"
 
 const template = `{
@@ -8,8 +9,6 @@ const template = `{
     "data": {
       "type": "",
       "interface": "",
-      "author": {},
-      "version": "",
       "messages": {},
       "cadence": "",
       "dependencies": {},
@@ -23,18 +22,18 @@ interface iGenerateTemplate {
     type: string,
     iface: string,
     // author: string,
-    version: string,
+    // version: string,
     messages: { [key: string]: any },
     cadence: string,
     dependencies: { [key: string]: any },
     args: { [key: string]: any },
 }
 
-export function generateTemplate({
+export async function generateTemplate({
     type,
     iface,
     // author,
-    version,
+    // version,
     messages,
     cadence,
     dependencies,
@@ -44,13 +43,13 @@ export function generateTemplate({
     template.data.type = type
     template.data.interface = iface
     // template.author = author
-    template.data.version = version
+    // template.data.version = version
     template.data.messages = messages
     template.data.cadence = cadence
     template.data.dependencies = dependencies
     template.data.arguments = args
 
-    template.id = crypto.createHash("sha256").update(JSON.stringify(template)).digest("hex")
+    template.id = await fcl.InteractionTemplateUtils.generateTemplateId({ template })
 
     return template
 }

@@ -17,5 +17,6 @@ export interface iAuditMonad {
 
 export const generateAuditMonad = (file: File, flowJSON?: {[key: string]: any}): iAuditMonad => ({
     flowJSON,
-    file
+    file,
+    templateId: JSON.parse(file.content).id
 })

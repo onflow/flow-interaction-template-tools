@@ -29,15 +29,62 @@ USAGE
 <!-- usagestop -->
 # Commands
 <!-- commands -->
+* [`flowplate audit PATH`](#flowplate-audit-path)
+* [`flowplate generate PATH`](#flowplate-generate-path)
 * [`flowplate hello PERSON`](#flowplate-hello-person)
 * [`flowplate hello world`](#flowplate-hello-world)
 * [`flowplate help [COMMAND]`](#flowplate-help-command)
 * [`flowplate plugins`](#flowplate-plugins)
-* [`flowplate plugins:inspect PLUGIN...`](#flowplate-pluginsinspect-plugin)
 * [`flowplate plugins:install PLUGIN...`](#flowplate-pluginsinstall-plugin)
+* [`flowplate plugins:inspect PLUGIN...`](#flowplate-pluginsinspect-plugin)
+* [`flowplate plugins:install PLUGIN...`](#flowplate-pluginsinstall-plugin-1)
 * [`flowplate plugins:link PLUGIN`](#flowplate-pluginslink-plugin)
 * [`flowplate plugins:uninstall PLUGIN...`](#flowplate-pluginsuninstall-plugin)
+* [`flowplate plugins:uninstall PLUGIN...`](#flowplate-pluginsuninstall-plugin-1)
+* [`flowplate plugins:uninstall PLUGIN...`](#flowplate-pluginsuninstall-plugin-2)
 * [`flowplate plugins update`](#flowplate-plugins-update)
+* [`flowplate serve PATH [PORT]`](#flowplate-serve-path-port)
+* [`flowplate verify TEMPLATEPATH AUDITPATH`](#flowplate-verify-templatepath-auditpath)
+
+## `flowplate audit PATH`
+
+Generate transaction templates from .cdc files.
+
+```
+USAGE
+  $ flowplate audit [PATH]
+
+ARGUMENTS
+  PATH  Path to a folder or individual CDC file.
+
+DESCRIPTION
+  Generate transaction templates from .cdc files.
+
+EXAMPLES
+  $ flowplate audit ./src/cadence
+```
+
+_See code: [dist/commands/audit/index.ts](https://github.com/JeffreyDoyle/flowplate/blob/v0.0.0/dist/commands/audit/index.ts)_
+
+## `flowplate generate PATH`
+
+Generate transaction templates from .cdc files.
+
+```
+USAGE
+  $ flowplate generate [PATH]
+
+ARGUMENTS
+  PATH  Path to a folder or individual CDC file.
+
+DESCRIPTION
+  Generate transaction templates from .cdc files.
+
+EXAMPLES
+  $ flowplate generate ./src/cadence
+```
+
+_See code: [dist/commands/generate/index.ts](https://github.com/JeffreyDoyle/flowplate/blob/v0.0.0/dist/commands/generate/index.ts)_
 
 ## `flowplate hello PERSON`
 
@@ -118,6 +165,44 @@ EXAMPLES
 ```
 
 _See code: [@oclif/plugin-plugins](https://github.com/oclif/plugin-plugins/blob/v2.0.11/src/commands/plugins/index.ts)_
+
+## `flowplate plugins:install PLUGIN...`
+
+Installs a plugin into the CLI.
+
+```
+USAGE
+  $ flowplate plugins:install PLUGIN...
+
+ARGUMENTS
+  PLUGIN  Plugin to install.
+
+FLAGS
+  -f, --force    Run yarn install with force flag.
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Installs a plugin into the CLI.
+
+  Can be installed from npm or a git url.
+
+  Installation of a user-installed plugin will override a core plugin.
+
+  e.g. If you have a core plugin that has a 'hello' command, installing a user-installed plugin with a 'hello' command
+  will override the core plugin implementation. This is useful if a user needs to update core plugin functionality in
+  the CLI without the need to patch and update the whole CLI.
+
+ALIASES
+  $ flowplate plugins add
+
+EXAMPLES
+  $ flowplate plugins:install myplugin 
+
+  $ flowplate plugins:install https://github.com/someuser/someplugin
+
+  $ flowplate plugins:install someuser/someplugin
+```
 
 ## `flowplate plugins:inspect PLUGIN...`
 
@@ -229,6 +314,52 @@ ALIASES
   $ flowplate plugins remove
 ```
 
+## `flowplate plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ flowplate plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ flowplate plugins unlink
+  $ flowplate plugins remove
+```
+
+## `flowplate plugins:uninstall PLUGIN...`
+
+Removes a plugin from the CLI.
+
+```
+USAGE
+  $ flowplate plugins:uninstall PLUGIN...
+
+ARGUMENTS
+  PLUGIN  plugin to uninstall
+
+FLAGS
+  -h, --help     Show CLI help.
+  -v, --verbose
+
+DESCRIPTION
+  Removes a plugin from the CLI.
+
+ALIASES
+  $ flowplate plugins unlink
+  $ flowplate plugins remove
+```
+
 ## `flowplate plugins update`
 
 Update installed plugins.
@@ -244,4 +375,46 @@ FLAGS
 DESCRIPTION
   Update installed plugins.
 ```
+
+## `flowplate serve PATH [PORT]`
+
+Serve templates and audits by id.
+
+```
+USAGE
+  $ flowplate serve [PATH] [PORT]
+
+ARGUMENTS
+  PATH  Path to a folder or individual CDC file.
+  PORT  Port to run on.
+
+DESCRIPTION
+  Serve templates and audits by id.
+
+EXAMPLES
+  $ flowplate serve ./src/templates
+```
+
+_See code: [dist/commands/serve/index.ts](https://github.com/JeffreyDoyle/flowplate/blob/v0.0.0/dist/commands/serve/index.ts)_
+
+## `flowplate verify TEMPLATEPATH AUDITPATH`
+
+Verify InteractionTemplate using a corresponding InteractionTemplateAudit.
+
+```
+USAGE
+  $ flowplate verify [TEMPLATEPATH] [AUDITPATH]
+
+ARGUMENTS
+  TEMPLATEPATH  Path to a file containing an InteractionTemplate.
+  AUDITPATH     Path to a file containing an InteractionTemplateAudit.
+
+DESCRIPTION
+  Verify InteractionTemplate using a corresponding InteractionTemplateAudit.
+
+EXAMPLES
+  $ flowplate verify ./src/cadence/template ./src/cadence/audit
+```
+
+_See code: [dist/commands/verify/index.ts](https://github.com/JeffreyDoyle/flowplate/blob/v0.0.0/dist/commands/verify/index.ts)_
 <!-- commandsstop -->

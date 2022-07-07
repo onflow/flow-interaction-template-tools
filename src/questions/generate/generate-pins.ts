@@ -128,38 +128,49 @@ export async function generatePins(templateMonad: iTemplateMonad): Promise<iTemp
         for (const networkIport of networkIports) {
             CliUx.ux.action.start(chalk.whiteBright.bold(`🌱 Generating dependency pin for ${networkIport.addressPlaceholder} on ${network}`))
 
-            let horizon: iport[] = [{
-                ...networkIport
-            }]
+            // let horizon: iport[] = [{
+            //     ...networkIport
+            // }]
 
-            let contractHashesJoined = ""
-            for (const horizonIport of horizon) {
+            // let contractHashesJoined = ""
+            // for (const horizonIport of horizon) {
 
-                let account = await fcl.send([
-                    fcl.getAccount(horizonIport.address!),
-                    fcl.atBlockHeight(latestBlockPin)
-                ]).then(fcl.decode)
+            //     let account = await fcl.send([
+            //         fcl.getAccount(horizonIport.address!),
+            //         fcl.atBlockHeight(latestBlockPin)
+            //     ]).then(fcl.decode)
     
-                horizonIport.contract = account.contracts?.[horizonIport.contractName]
+            //     horizonIport.contract = account.contracts?.[horizonIport.contractName]
     
-                let contractIports: iport[] = findImports(horizonIport.contract!, false)
+            //     let contractIports: iport[] = findImports(horizonIport.contract!, false)
     
-                horizon.push(...contractIports)
-            }
+            //     horizon.push(...contractIports)
+            // }
 
-            let contractHashes = horizon.map(iport => {
-                return crypto.createHash("sha256").update(iport.contract!).digest("hex")
+            // let contractHashes = horizon.map(iport => {
+            //     return crypto.createHash("sha256").update(iport.contract!).digest("hex")
+            // })
+            // contractHashesJoined = contractHashes.join("")
+            
+            const pin = await fcl.InteractionTemplateUtils.generateDependencyPin({
+                address: networkIport.address!,
+                contractName: networkIport.contractName!,
+                blockHeight: latestBlockPin,
             })
-            contractHashesJoined = contractHashes.join("") 
+
+            console.log("PIN: ", pin)
 
             pins[networkIport.addressPlaceholder!] = {
-                ...pins[networkIport.addressPlaceholder!],
-                [network]: {
-                    address: networkIport.address!,
-                    contract: networkIport.contractName!,
-                    fq_address: `A.${networkIport.address!}.${networkIport.contractName!}`,
-                    pin: crypto.createHash("sha256").update(contractHashesJoined).digest("hex"),
-                    pin_block_height: latestBlockPin    
+                ...(pins?.[networkIport.addressPlaceholder!] || []),
+                [networkIport.contractName!]: {
+                    ...(pins?.[networkIport.addressPlaceholder!]?.[networkIport.contractName!] || []),
+                    [network]: {
+                        address: networkIport.address!,
+                        contract: networkIport.contractName!,
+                        fq_address: `A.${networkIport.address!}.${networkIport.contractName!}`,
+                        pin: pin,
+                        pin_block_height: latestBlockPin    
+                    }
                 }
             }
     

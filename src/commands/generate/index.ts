@@ -57,12 +57,12 @@ export default class Generate extends Command {
       let templateMonad = generateTemplateMonad(file, flowJSON)
 
       let questions = [
+        // generatePins,
         selectInteractionType,
         inputMessages,
         inputArguments,
         generatePins,
-        inputInterfaceID,
-        inputVersion
+        inputInterfaceID
       ]
 
       templateMonad = 
@@ -74,7 +74,7 @@ export default class Generate extends Command {
       // let detectedScript = file.content.match(/pub fun main/g)
       // let detectedTransaction = !detectedScript && file.content.match(/transaction/g)
 
-      let template = generateTemplate(templateMonad)
+      let template = await generateTemplate(templateMonad)
 
       logger.default("\n🌱 Template: \n\n", JSON.stringify(template, null, 2), "\n")
 
