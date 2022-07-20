@@ -20,7 +20,7 @@
     "@oclif/core": "^1.7.0",
     "@oclif/plugin-help": "^5",
     "@oclif/plugin-plugins": "^2.0.1",
-    "@onflow/fcl": "file:/Users/jeffreydoyle/Documents/fcl-js/packages/fcl",
+    "@onflow/fcl": "1.1.1-templates.3",
     "chalk": "4.0.0",
     "cors": "^2.8.5",
     "elliptic": "^6.5.4",

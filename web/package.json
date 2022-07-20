@@ -1,0 +1,23 @@
+{
+  "name": "web",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -p 3031",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^2.2.1",
+    "formik": "^2.2.9",
+    "@onflow/fcl": "1.1.1-templates.3",
+    "next": "12.2.0",
+    "react": "18.2.0",
+    "react-dom": "18.2.0"
+  },
+  "devDependencies": {
+    "eslint": "8.19.0",
+    "eslint-config-next": "12.2.0"
+  }
+}
