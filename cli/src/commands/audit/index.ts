@@ -1,117 +1,125 @@
-import {Command, Flags} from '@oclif/core'
-import inquirer from "inquirer"
-import * as fcl from "@onflow/fcl"
-import { exec } from "child_process"
-import {logger} from "../../utils/logger"
-import {tags} from "../../utils/bcp47-tags"
-import {readFiles, File} from "../../utils/file/read-files"
-import {writeFile} from "../../utils/file/write-file"
-import {question as selectTemplateFiles} from "../../questions/audit/select-template-files"
-import {generateAudit} from '../../utils/audit/generate-audit'
-import {question as inputAccount} from "../../questions/audit/input-account"
-import {question as inputKeyId} from "../../questions/audit/key-id"
-import {question as inputSigAlgo} from "../../questions/audit/sign-algo"
-import {question as inputHashAlgo} from "../../questions/audit/hash-algo"
-import {question as inputPrivateKey} from "../../questions/audit/input-private-key"
-import {generateAuditMonad, iAuditMonad} from "../../utils/audit/audit-monad"
-import {auditSplashTitle} from "../../utils/splashscreen"
-import {sign} from "../../utils/crypto/sign"
+import { Command, Flags } from "@oclif/core";
+import inquirer from "inquirer";
+import * as fcl from "@onflow/fcl";
+import { exec } from "child_process";
+import { logger } from "../../utils/logger";
+import { tags } from "../../utils/bcp47-tags";
+import { readFiles, File } from "../../utils/file/read-files";
+import { writeFile } from "../../utils/file/write-file";
+import { question as selectTemplateFiles } from "../../questions/audit/select-template-files";
+import { question as inputAccount } from "../../questions/audit/input-account";
+import { question as inputKeyId } from "../../questions/audit/key-id";
+import { question as inputSigAlgo } from "../../questions/audit/sign-algo";
+import { question as inputHashAlgo } from "../../questions/audit/hash-algo";
+import { question as inputPrivateKey } from "../../questions/audit/input-private-key";
+import { question as inputNetwork } from "../../questions/audit/input-network";
+import { generateAuditMonad, iAuditMonad } from "../../utils/audit/audit-monad";
+import { auditSplashTitle } from "../../utils/splashscreen";
+import { sign } from "../../utils/crypto/sign";
+import { signSendAuditTransaction } from "../../utils/audit/sign-send-audit-transaction";
 
 const rightPaddedHexBuffer = (value: string, pad: number) =>
-  Buffer.from(value.padEnd(pad * 2, "0"), "hex")
+  Buffer.from(value.padEnd(pad * 2, "0"), "hex");
 
 export default class Generate extends Command {
-  static description = 'Generate transaction templates from .cdc files.'
+  static description = "Generate transaction templates from .cdc files.";
 
-  static examples = [
-    `$ flowplate audit ./src/cadence`,
-  ]
+  static examples = [`$ flowplate audit ./src/cadence`];
 
-  static flags = {}
+  static flags = {};
 
-  static args = [{
-    name: 'path',
-    description: 'Path to a folder or individual CDC file.',
-    required: true,
-  }]
+  static args = [
+    {
+      name: "path",
+      description: "Path to a folder or individual CDC file.",
+      required: true,
+    },
+  ];
 
   async run(): Promise<void> {
-    const {argv, args, flags} = await this.parse(Generate)
-    const { path } = args
+    const { argv, args, flags } = await this.parse(Generate);
+    const { path } = args;
 
-    auditSplashTitle()
+    auditSplashTitle();
 
-    let files: File[] = await readFiles(path)
+    let files: File[] = await readFiles(path);
 
-    const flowJSONFiles = await readFiles("flow.json")
-    const flowJSON = flowJSONFiles[0] ? JSON.parse(flowJSONFiles[0].content) : null
+    const flowJSONFiles = await readFiles("flow.json");
+    const flowJSON = flowJSONFiles[0]
+      ? JSON.parse(flowJSONFiles[0].content)
+      : null;
 
     // If more than one file found, ask which files they want to generate templates for.
-    files = await selectTemplateFiles(files)
+    files = await selectTemplateFiles(files);
 
     for (let i = 0; i < files.length; i++) {
-      let file = files[i]
+      let file = files[i];
 
-      let template = JSON.parse(file.content)
+      let template = JSON.parse(file.content);
 
-      logger.default(`\n🌱 [Audit ${i + 1} / ${files.length}] ⚖️  Generating audit for ${file.path}\n\n----${file.path}----`)
-      logger.default(file.content)
-      logger.default(`----\n`)
+      logger.default(
+        `\n🌱 [Audit ${i + 1} / ${files.length}] ⚖️  Generating audit for ${
+          file.path
+        }\n\n----${file.path}----`
+      );
+      logger.default(file.content);
+      logger.default(`----\n`);
 
-      let auditMonad = generateAuditMonad(file, flowJSON)
-      
+      let auditMonad = generateAuditMonad(file, flowJSON);
+
       let inputs = [
         inputAccount,
+        inputNetwork,
         inputPrivateKey,
         inputKeyId,
         inputSigAlgo,
         inputHashAlgo,
-      ]
+      ];
 
-      auditMonad = 
-        await inputs.reduce(
-          async (am, input) => input(await am), 
-          Promise.resolve(auditMonad)
-        )
+      // TODO DO BETTER
+      await fcl.config().put("0xFlowInteractionAudit", "0xf8a5da6d9710021a");
 
-      const USER_DOMAIN_TAG = 
-        rightPaddedHexBuffer(
-          Buffer.from("FLOW-V0.0-user").toString("hex"),
-          32
-        ).toString("hex")
-
-      let msg = USER_DOMAIN_TAG + template?.id
-
-      const sig = await sign(auditMonad.privateKey!, auditMonad.sigAlg!, auditMonad.hashAlg!, msg)
+      auditMonad = await inputs.reduce(
+        async (am, input) => input(await am),
+        Promise.resolve(auditMonad)
+      );
 
       auditMonad = {
         ...auditMonad,
         signerAddress: fcl.withPrefix(auditMonad.account?.address),
         signerKeyId: auditMonad.keyId,
-        signerSignature: sig
-      }
+      };
 
-      let audit = await generateAudit(auditMonad)
+      let auditTxId = await signSendAuditTransaction(auditMonad);
 
-      logger.default("\n🌱 Audit: \n\n", JSON.stringify(audit, null, 2), "\n")
+      logger.default(
+        "\n🌱 Audit TxID: \n\n",
+        JSON.stringify(auditTxId, null, 2),
+        "\n"
+      );
 
-      let filePathLessCDC = 
-        file.path.split(".")
-        .slice(0, file.path.split(".").length - 1)
-        .filter(s => s !== "")
-        .join(".")
-      if (file.path.split("")[0] === ".") filePathLessCDC = "." + filePathLessCDC
+      logger.default("\n🌱 Audit transaction Submitted, awaiting Execution");
 
-      let filePathParts = [filePathLessCDC]
-      filePathParts.push("audit")
-      filePathParts.push("json")
-      let auditFilePath = filePathParts.join(".")
+      await new Promise((res, rej): void => {
+        fcl
+          .config()
+          .overload({ "accessNode.api": auditMonad.accessNodeAPI! }, async () =>
+            fcl.tx(auditTxId!).subscribe((tx) => {
+              if (tx.status === 3) {
+                logger.default(
+                  "\n🌱 Audit transaction Executed, awaiting Sealing"
+                );
+              }
 
-      await writeFile(auditFilePath, JSON.stringify(audit, null, 2))
-
-      logger.default(`\n🌱 Saved interaction audit to ${auditFilePath}\n`)
+              if (tx.status >= 4) {
+                logger.default("\n🌱 Audit transaction Sealed");
+                res(null);
+              }
+            })
+          );
+      });
     }
 
-    logger.default("\n🌱🎉 Interaction audit complete!\n")
+    logger.default("\n🌱🎉 Interaction audit complete!\n");
   }
 }
