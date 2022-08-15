@@ -1,129 +1,81 @@
-import {Command, Flags} from '@oclif/core'
-import * as fcl from "@onflow/fcl"
-import {logger} from "../../utils/logger"
-import {readFiles, File} from "../../utils/file/read-files"  
-import {question as selectNetwork} from "../../questions/verify/network"
-import {verifySplashTitle} from "../../utils/splashscreen"
+import { Command, Flags } from "@oclif/core";
+import * as fcl from "@onflow/fcl";
+import { logger } from "../../utils/logger";
+import { readFiles, File } from "../../utils/file/read-files";
+import { question as selectNetwork } from "../../questions/verify/network";
+import { verifySplashTitle } from "../../utils/splashscreen";
 
 export default class Generate extends Command {
-  static description = 'Verify InteractionTemplate using a corresponding InteractionTemplateAudit.'
+  static description =
+    "Verify InteractionTemplate is audited by an auditor account.";
 
   static examples = [
-    `$ flowplate verify ./src/cadence/template ./src/cadence/audit`,
-  ]
+    `$ flowplate verify "./src/cadence/template.json" "0xABC123DEF456 `,
+  ];
 
-  static flags = {}
+  static flags = {};
 
-  static args = [{
-    name: 'templatePath',
-    description: 'Path to a file containing an InteractionTemplate.',
-    required: true,
-  },{
-    name: 'auditPath',
-    description: 'Path to a file containing an InteractionTemplateAudit.',
-    required: true,
-  }]
+  static args = [
+    {
+      name: "templatePath",
+      description: "Path to a file containing an InteractionTemplate.",
+      required: true,
+    },
+    {
+      name: "auditorAddress",
+      description: "Address of an auditor.",
+      required: true,
+    },
+  ];
 
   async run(): Promise<void> {
-    const {argv, args, flags} = await this.parse(Generate)
-    const { templatePath, auditPath } = args
+    const { argv, args, flags } = await this.parse(Generate);
+    const { templatePath, auditorAddress } = args;
 
-    verifySplashTitle()
+    verifySplashTitle();
 
-    let templateFiles: File[] = await readFiles(templatePath)
-    let auditFiles: File[] = await readFiles(auditPath)
+    let templateFiles: File[] = await readFiles(templatePath);
 
-    if (auditFiles.length > 1) return // Cannot audit more than one audit at a time
+    if (templateFiles.length > 1) return; // Cannot audit more than one template at a time
 
-    const flowJSONFiles = await readFiles("flow.json")
-    const flowJSON = flowJSONFiles[0] ? JSON.parse(flowJSONFiles[0].content) : null
+    const flowJSONFiles = await readFiles("flow.json");
+    const flowJSON = flowJSONFiles[0]
+      ? JSON.parse(flowJSONFiles[0].content)
+      : null;
 
-    // // If more than one file found, ask which files they want to generate templates for.
-    // files = await selectTemplateFiles(files)
-    // // If more than one file found, ask which files they want to generate templates for.
-    // files = await selectTemplateFiles(files)
+    let templateFile = templateFiles[0];
 
-    let auditFile = auditFiles[0]
-    let templateFile = templateFiles[0]
+    let template = JSON.parse(templateFile.content);
 
-    let template = JSON.parse(templateFile.content)
-    let audit = JSON.parse(auditFile.content)
+    logger.default(
+      `\n🌱 Verifying audit by auditor ${auditorAddress} for ${templateFile.path}\n\n----${templateFile.path}----`
+    );
+    logger.default(templateFile.content);
+    logger.default(`----\n\n`);
 
-    logger.default(`\n🌱 Verifying audit ${auditFile.path} for ${templateFile.path}\n\n----${templateFile.path}----`)
-    logger.default(templateFile.content)
-    logger.default(`----\n\n`)
-    logger.default(`----${auditFile.path}----`)
-    logger.default(auditFile.content)
-    logger.default(`----\n`)
+    logger.default("\n🌱 Collecting network to perform audit\n");
+    let network = await selectNetwork(flowJSON);
 
-    logger.default("\n🌱 Collecting network to perform audit\n")
-    let network = await selectNetwork(flowJSON)
+    const accessNodeAPI = flowJSON?.networks?.[network];
+    await fcl.config().put("accessNode.api", accessNodeAPI);
 
-    const accessNodeAPI = flowJSON?.networks?.[network]
-
-    await fcl.config().put("accessNode.api", accessNodeAPI)
-
-    let account = await fcl.account(audit?.data?.signer?.address)
-    let key = account?.keys[audit?.data?.signer?.key_id]
-
-    let sigAlgo = key.signAlgoString
-    let hashAlgo = key.hashAlgoString
-    let pubKey = key.publicKey
-
-    if (!sigAlgo) throw new Error("Unknown sig algo")
-    if (!hashAlgo) throw new Error("Unknown hash algo")
-
-    let msg = template?.id
-
-    let address = audit?.data?.signer?.address
-    let key_id = audit?.data?.signer?.key_id
-    let signature = audit?.data?.signer?.signature
-
-    let isVerified = false
-
+    let isVerified = false;
     try {
-      isVerified = await fcl.query({
-        cadence: `
-        pub fun main(
-          address: Address,
-          message: String,
-          keyIndex: Int,
-          signature: String,
-          domainSeparationTag: String,
-        ): Bool {
-          let account = getAccount(address)
+      isVerified =
+        await fcl.InteractionTemplateUtils.verifyInteractionTemplateIsAudited({
+          template,
+          auditors: [fcl.withPrefix(auditorAddress)],
+        });
+    } catch (e) {
+      logger.default("\n⚠️  Verify \n\nERROR");
+      logger.default(
+        `\n💡 Ensure Auditor address is valid for network=${network}\n`
+      );
+      return;
+    }
 
-          let accountKey = account.keys.get(keyIndex: keyIndex) ?? panic("Key provided does not exist on account")
-          
-          let messageBytes = message.decodeHex()
-          let sigBytes = signature.decodeHex()
+    logger.default("\n🌱 Verify \n\n", isVerified ? "SUCCESS" : "FAIL", "\n");
 
-          // Ensure the key is not revoked
-          if accountKey.isRevoked {
-              return false
-          }
-
-          // Ensure the signature is valid
-          return accountKey.publicKey.verify(
-              signature: sigBytes,
-              signedData: messageBytes,
-              domainSeparationTag: domainSeparationTag,
-              hashAlgorithm: accountKey.hashAlgorithm
-          )
-        }
-        `,
-        args: (arg, t) => ([
-          arg(address, t.Address),
-          arg(msg, t.String),
-          arg(String(key_id), t.Int),
-          arg(signature, t.String),
-          arg("FLOW-V0.0-user", t.String),
-        ])
-      })
-    } catch(e) {}
-
-    logger.default("\n🌱 Verify \n\n", isVerified ? "SUCCESS" : "FAIL", "\n")
-
-    logger.default("\n🌱🎉 Interaction audit complete!\n")
+    logger.default("\n🌱🎉 Audit verification complete!\n");
   }
 }
