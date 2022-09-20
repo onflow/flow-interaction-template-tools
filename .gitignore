@@ -9,8 +9,11 @@
 /cli/yarn.lock
 /cli/node_modules
 /cli/oclif.manifest.json
+/cli/flow.json
 
 /web/node_modules
 /web/package-lock.json
 /web/yarn.lock
+/cli/flow.json
 
+**/.DS_Store
