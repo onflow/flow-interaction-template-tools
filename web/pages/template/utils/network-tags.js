@@ -1,5 +1,1 @@
-export const networks = [
-    "mainnet",
-    "testnet",
-    "emulator"
-]
+export const networks = ["mainnet", "testnet", "emulator"];
