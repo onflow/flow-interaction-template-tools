@@ -76,8 +76,16 @@ export default class Generate extends Command {
         inputHashAlgo,
       ];
 
-      // TODO DO BETTER
-      await fcl.config().put("0xFlowInteractionAudit", "0xf8a5da6d9710021a");
+      // DO BETTER
+      if (auditMonad.signerNetwork === "mainnet") {
+        await fcl
+          .config()
+          .put("0xFlowInteractionTemplateAudit", "0xfd100e39d50a13e6");
+      } else if (auditMonad.signerNetwork === "testnet") {
+        await fcl
+          .config()
+          .put("0xFlowInteractionTemplateAudit", "0xf78bfc12d0a786dc");
+      }
 
       auditMonad = await inputs.reduce(
         async (am, input) => input(await am),

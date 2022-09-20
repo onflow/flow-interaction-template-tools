@@ -33,40 +33,39 @@ export async function signSendAuditTransaction(auditMonad: iAuditMonad) {
       fcl.decode(
         await fcl.send([
           fcl.transaction(`
-    import FlowInteractionAudit from 0xFlowInteractionAudit
+          import FlowInteractionTemplateAudit from 0xFlowInteractionTemplateAudit
 
-    transaction(templateId: String) {
-      let flowInteractionAuditManagerPrivateRef: &FlowInteractionAudit.FlowInteractionAuditManager{FlowInteractionAudit.FlowInteractionAuditManagerPrivate}
-    
-      prepare(account: AuthAccount) {
-        if account.borrow<&FlowInteractionAudit.FlowInteractionAuditManager>(from: FlowInteractionAudit.FlowInteractionAuditManagerStoragePath) == nil {
-          let flowInteractionAuditManager <- FlowInteractionAudit.createFlowInteractionAuditManager()
-    
-          account.save(
-            <- flowInteractionAuditManager, 
-            to: FlowInteractionAudit.FlowInteractionAuditManagerStoragePath,
-          )
-                
-          account.link<&FlowInteractionAudit.FlowInteractionAuditManager{FlowInteractionAudit.FlowInteractionAuditManagerPublic}>(
-            FlowInteractionAudit.FlowInteractionAuditManagerPublicPath,
-            target: FlowInteractionAudit.FlowInteractionAuditManagerStoragePath
-          )
-    
-          account.link<&FlowInteractionAudit.FlowInteractionAuditManager{FlowInteractionAudit.FlowInteractionAuditManagerPrivate}>(
-            FlowInteractionAudit.FlowInteractionAuditManagerPrivatePath,
-            target: FlowInteractionAudit.FlowInteractionAuditManagerStoragePath
-          )
-        }
-
-        self.flowInteractionAuditManagerPrivateRef = 
-          account.borrow<&FlowInteractionAudit.FlowInteractionAuditManager{FlowInteractionAudit.FlowInteractionAuditManagerPrivate}>(from: FlowInteractionAudit.FlowInteractionAuditManagerStoragePath)
-            ?? panic("Could not borrow ref to FlowInteractionAuditManagerPrivate")
-      }
-    
-      execute {
-        self.flowInteractionAuditManagerPrivateRef.addAudit(templateId: templateId)
-      }
-    }
+          transaction(templateId: String) {
+            let flowInteractionTemplateAuditManagerPrivateRef: &FlowInteractionTemplateAudit.AuditManager{FlowInteractionTemplateAudit.AuditManagerPrivate}
+            prepare(account: AuthAccount) {
+              if account.borrow<&FlowInteractionTemplateAudit.AuditManager>(from: FlowInteractionTemplateAudit.AuditManagerStoragePath) == nil {
+                let FlowInteractionTemplateAuditManager <- FlowInteractionTemplateAudit.createAuditManager()
+          
+                account.save(
+                  <- FlowInteractionTemplateAuditManager, 
+                  to: FlowInteractionTemplateAudit.AuditManagerStoragePath,
+                )
+                      
+                account.link<&FlowInteractionTemplateAudit.AuditManager{FlowInteractionTemplateAudit.AuditManagerPublic}>(
+                  FlowInteractionTemplateAudit.AuditManagerPublicPath,
+                  target: FlowInteractionTemplateAudit.AuditManagerStoragePath
+                )
+          
+                account.link<&FlowInteractionTemplateAudit.AuditManager{FlowInteractionTemplateAudit.AuditManagerPrivate}>(
+                  FlowInteractionTemplateAudit.AuditManagerPrivatePath,
+                  target: FlowInteractionTemplateAudit.AuditManagerStoragePath
+                )
+              }
+          
+              self.flowInteractionTemplateAuditManagerPrivateRef = 
+                account.borrow<&FlowInteractionTemplateAudit.AuditManager{FlowInteractionTemplateAudit.AuditManagerPrivate}>(from: FlowInteractionTemplateAudit.AuditManagerStoragePath)
+                  ?? panic("Could not borrow ref to AuditManagerPrivate")
+            }
+          
+            execute {
+              self.flowInteractionTemplateAuditManagerPrivateRef.addAudit(templateId: templateId)
+            }
+          }
     `),
           fcl.args([
             fcl.arg(auditMonad.templateId!, fcl.t.String as fcl.FType),

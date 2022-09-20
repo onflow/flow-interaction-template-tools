@@ -61,11 +61,12 @@ export default class Generate extends Command {
 
     let isVerified = false;
     try {
-      isVerified =
-        await fcl.InteractionTemplateUtils.verifyInteractionTemplateIsAudited({
+      let audits =
+        await fcl.InteractionTemplateUtils.getInteractionTemplateAudits({
           template,
           auditors: [fcl.withPrefix(auditorAddress)],
         });
+      isVerified = Object.keys(audits).includes(fcl.withPrefix(auditorAddress));
     } catch (e) {
       logger.default("\n⚠️  Verify \n\nERROR");
       logger.default(

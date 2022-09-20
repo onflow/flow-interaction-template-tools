@@ -20,7 +20,7 @@ declare module "@onflow/fcl" {
 
     function verifyInteractionTemplateAudit(opts: {}): string;
 
-    function verifyInteractionTemplateIsAudited(opts: {}): any;
+    function getInteractionTemplateAudits(opts: {}): any;
   }
 
   // CONFIGURATION
