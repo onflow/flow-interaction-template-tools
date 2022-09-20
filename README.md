@@ -2,7 +2,7 @@
 
 > Interaction Templates are a concept established in FLIP-934. Read the FLIP [here](https://github.com/onflow/flips/blob/main/flips/20220503-interaction-templates.md)
 
-## ⚠️ Status
+## ⚠️ Status | EARLY DEVELOPMENT
 
 - **Stable:** No
 - **Risk of Breaking Change:** High
