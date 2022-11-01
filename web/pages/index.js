@@ -18,15 +18,15 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { Formik, FieldArray, Field, useFormik } from "formik";
-import { tags } from "./template/utils/bcp47-tags";
+import { tags } from "../components/template/utils/bcp47-tags";
 import { useState, useRef, useEffect } from "react";
 
-import { Messages } from "./template/messages";
-import { Arguments } from "./template/arguments";
-import { Dependencies } from "./template/dependencies";
+import { Messages } from "../components/template/messages";
+import { Arguments } from "../components/template/arguments";
+import { Dependencies } from "../components/template/dependencies";
 
-import { generateTemplate } from "./template/utils/gen-template.js";
-import { regenerateTemplateID } from "./template/utils/regenerate-template-id.js";
+import { generateTemplate } from "../components/template/utils/gen-template.js";
+import { regenerateTemplateID } from "../components/template/utils/regenerate-template-id.js";
 
 import {
   genNetwork,
@@ -36,7 +36,7 @@ import {
   genArgument,
   genMessageTranslation,
   genMessage,
-} from "./template/utils/form-type-generators.js";
+} from "../components/template/utils/form-type-generators.js";
 
 const Template = () => {
   const [generatedTemplate, setGeneratedTemplate] = useState(
@@ -53,6 +53,7 @@ const Template = () => {
   const regenTemplateID = async () => {
     let newTemplate = await regenerateTemplateID(JSON.parse(generatedTemplate));
     setGeneratedTemplate(JSON.stringify(newTemplate, null, 2));
+    alert("Regenerated Interaction Template");
   };
 
   return (
@@ -91,7 +92,6 @@ const Template = () => {
                   }}
                   onSubmit={(values) =>
                     setTimeout(async () => {
-                      console.log("values before gen", values);
                       let processedTemplate = await generateTemplate({
                         type: values.type,
                         iface: values.templateInterface,
@@ -103,7 +103,7 @@ const Template = () => {
                       setGeneratedTemplate(
                         JSON.stringify(processedTemplate, null, 2)
                       );
-                      templateTextAreaRef.value = newTemplate;
+                      alert("New Template Generated");
                     }, 500)
                   }
                   validateOnChange={false}
