@@ -1,7 +1,7 @@
 {
-  "name": "@onflow/interaction-template-utils",
+  "name": "@onflow/interaction-template-generators",
   "version": "0.0.1",
-  "description": "Interaction Template Utils",
+  "description": "Interaction Template Generators",
   "license": "Apache-2.0",
   "author": "Dapper Labs <dev@dapperlabs.com>",
   "homepage": "https://onflow.org",
@@ -21,10 +21,10 @@
       "PACKAGE_CURRENT_VERSION": "TESTVERSION"
     }
   },
-  "source": "src/interaction-template-utils.js",
-  "main": "dist/interaction-template-utils.js",
-  "module": "dist/interaction-template-utils.module.js",
-  "unpkg": "dist/interaction-template-utils.umd.js",
+  "source": "src/interaction-template-generators.js",
+  "main": "dist/interaction-template-generators.js",
+  "module": "dist/interaction-template-generators.module.js",
+  "unpkg": "dist/interaction-template-generators.umd.js",
   "scripts": {
     "prepublishOnly": "npm test && npm run build",
     "test": "jest",
