@@ -1,7 +1,7 @@
 import * as fcl from "@onflow/fcl";
 import { MESSAGE, ARGUMENT, ARGUMENTS } from "../tags.js";
 
-export function generateArgument({ tag, type, index, messages = [] }) {
+export function arg({ tag, type, index, messages = [] }) {
   fcl.invariant(
     typeof tag === "string",
     "generateArgument({ tag }) Error: tag must be a string"
@@ -52,13 +52,13 @@ export function generateArgument({ tag, type, index, messages = [] }) {
   };
 }
 
-export function generateArguments(args = []) {
+export function args(ags = []) {
   fcl.invariant(
-    Array.isArray(args),
+    Array.isArray(ags),
     "generateArguments(args) Error: args must be an array"
   );
 
-  for (const argument of args) {
+  for (const argument of ags) {
     fcl.invariant(
       typeof argument === "object",
       "generateMessages(args) Error: Each argument must be an object"
@@ -71,7 +71,7 @@ export function generateArguments(args = []) {
 
   return {
     tag: ARGUMENTS,
-    xform: () => args.reduce((acc, arg) => ({ ...acc, ...arg.xform() }), {}),
-    arguments,
+    xform: () => ags.reduce((acc, arg) => ({ ...acc, ...arg.xform() }), {}),
+    ags,
   };
 }

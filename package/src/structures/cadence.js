@@ -1,7 +1,7 @@
 import * as fcl from "@onflow/fcl";
 import { CADENCE } from "../tags.js";
 
-export function generateCadence(cadence) {
+export function cadence(cadence) {
   fcl.invariant(
     cadence != undefined,
     "generateCadence(cadence) Error - cadence must be defined"

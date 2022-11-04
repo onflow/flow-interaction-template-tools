@@ -1,7 +1,7 @@
 import * as fcl from "@onflow/fcl";
 import { MESSAGE_TRANSLATION, MESSAGE, MESSAGES } from "../tags.js";
 
-export function generateMessageTranslation({ bcp47tag, translation }) {
+export function messageTranslation({ bcp47tag, translation }) {
   fcl.invariant(
     typeof bcp47tag === "string",
     "generateMessage({ bcp47tag }) Error: bcp47tag must be a string"
@@ -19,7 +19,7 @@ export function generateMessageTranslation({ bcp47tag, translation }) {
   };
 }
 
-export function generateMessage({ tag, translations = [] }) {
+export function message({ tag, translations = [] }) {
   fcl.invariant(
     typeof tag === "string",
     "generateMessage({ tag }) Error: tag must be a string"
@@ -55,7 +55,7 @@ export function generateMessage({ tag, translations = [] }) {
   };
 }
 
-export function generateMessages(messages = []) {
+export function messages(messages = []) {
   fcl.invariant(
     Array.isArray(messages),
     "generateMessages(messages) Error: messages must be an array"

@@ -6,7 +6,7 @@ import {
   DEPENDENCY_CONTRACT_BY_NETWORK,
 } from "../tags.js";
 
-export function generateDependencyContractByNetwork({
+export function dependencyContractByNetwork({
   network,
   contractName,
   address,
@@ -54,7 +54,7 @@ export function generateDependencyContractByNetwork({
   };
 }
 
-export function generateDependencyContract({ contractName, networks = [] }) {
+export function dependencyContract({ contractName, networks = [] }) {
   fcl.invariant(
     typeof contractName === "string",
     "generateDependencyContract({ contractName }) Error: contractName must be a string"
@@ -89,7 +89,7 @@ export function generateDependencyContract({ contractName, networks = [] }) {
   };
 }
 
-export function generateDependency({ addressPlaceholder, contracts = [] }) {
+export function dependency({ addressPlaceholder, contracts = [] }) {
   fcl.invariant(
     typeof addressPlaceholder === "string",
     "generateArgument({ addressPlaceholder }) Error: addressPlaceholder must be a string"
@@ -119,7 +119,7 @@ export function generateDependency({ addressPlaceholder, contracts = [] }) {
   };
 }
 
-export function generateDependencies(dependencies = []) {
+export function dependencies(dependencies = []) {
   fcl.invariant(
     Array.isArray(dependencies),
     "generateDependencies(dependencies) Error: dependencies must be an array"

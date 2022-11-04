@@ -2,31 +2,31 @@ import * as FLIX from "./interaction-template-utils.js";
 
 describe("template", () => {
   test("makes a valid interaction template", async () => {
-    const template = await FLIX.generateTemplate({
-      type: FLIX.generateType("script"),
-      iface: FLIX.generateInterface("a1b2"),
-      messages: FLIX.generateMessages([
-        FLIX.generateMessage({
+    const template = await FLIX.template({
+      type: FLIX.type("script"),
+      iface: FLIX.iface("a1b2"),
+      messages: FLIX.messages([
+        FLIX.message({
           tag: "title",
           translations: [
-            FLIX.generateMessageTranslation({
+            FLIX.messageTranslation({
               bcp47tag: "en-US",
               translation: "hello world",
             }),
           ],
         }),
       ]),
-      cadence: FLIX.generateCadence(
+      cadence: FLIX.cadence(
         "pub fun main(msg: String): String { return 'hello world, ' + msg }"
       ),
-      dependencies: FLIX.generateDependencies([
-        FLIX.generateDependency({
+      dependencies: FLIX.dependencies([
+        FLIX.dependency({
           addressPlaceholder: "0xCONTRACT_A",
           contracts: [
-            FLIX.generateDependencyContract({
+            FLIX.dependencyContract({
               contractName: "ContractA",
               networks: [
-                FLIX.generateDependencyContractByNetwork({
+                FLIX.dependencyContractByNetwork({
                   network: "testnet",
                   contractName: "ContractA",
                   address: "0xABC123DEF456",
@@ -39,18 +39,18 @@ describe("template", () => {
           ],
         }),
       ]),
-      args: FLIX.generateArguments([
-        FLIX.generateArgument({
+      args: FLIX.args([
+        FLIX.arg({
           tag: "msg",
           type: "String",
           index: 0,
           messages: [
-            FLIX.generateMessage({
+            FLIX.message({
               tag: "title",
               translations: [
-                FLIX.generateMessageTranslation({
+                FLIX.messageTranslation({
                   bcp47tag: "en-US",
-                  translation: "A message",
+                  translation: 12,
                 }),
               ],
             }),

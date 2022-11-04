@@ -1,7 +1,7 @@
 import * as fcl from "@onflow/fcl";
 import { INTERFACE } from "../tags";
 
-export function generateInterface(iface) {
+export function iface(iface) {
   fcl.invariant(
     iface != undefined,
     "generateInterface(iface) Error - iface must be defined"

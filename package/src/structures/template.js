@@ -8,7 +8,7 @@ import {
   CADENCE,
 } from "../tags";
 
-const template = `{
+const _template = `{
   "f_type": "InteractionTemplate",
   "f_version": "1.0.0",
   "id": "",
@@ -22,9 +22,9 @@ const template = `{
   }   
 }`;
 
-const genTemplate = () => JSON.parse(template);
+const genTemplate = () => JSON.parse(_template);
 
-export async function generateTemplate({
+export async function template({
   type,
   iface,
   messages,
