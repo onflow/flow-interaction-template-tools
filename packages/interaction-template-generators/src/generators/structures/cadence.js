@@ -13,7 +13,7 @@ export function cadence(cadence) {
 
   return {
     tag: CADENCE,
-    xform: () => cadence,
+    xform: async () => cadence,
     cadence,
   };
 }

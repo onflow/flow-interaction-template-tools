@@ -78,9 +78,9 @@ export function dependencyContract({ contractName, networks = [] }) {
 
   return {
     tag: DEPENDENCY_CONTRACT,
-    xform: () => ({
-      [contractName]: networks.reduce(
-        (acc, curr) => ({ ...acc, ...curr.xform() }),
+    xform: async () => ({
+      [contractName]: await networks.reduce(
+        async (acc, curr) => ({ ...acc, ...(await curr.xform()) }),
         {}
       ),
     }),
@@ -108,9 +108,9 @@ export function dependency({ addressPlaceholder, contracts = [] }) {
 
   return {
     tag: DEPENDENCY,
-    xform: () => ({
-      [addressPlaceholder]: contracts.reduce(
-        (acc, curr) => ({ ...acc, ...curr.xform() }),
+    xform: async () => ({
+      [addressPlaceholder]: await contracts.reduce(
+        async (acc, curr) => ({ ...acc, ...(await curr.xform()) }),
         {}
       ),
     }),
@@ -138,8 +138,11 @@ export function dependencies(dependencies = []) {
 
   return {
     tag: DEPENDENCIES,
-    xform: () =>
-      dependencies.reduce((acc, curr) => ({ ...acc, ...curr.xform() }), {}),
+    xform: async () =>
+      await dependencies.reduce(
+        async (acc, curr) => ({ ...acc, ...(await curr.xform()) }),
+        {}
+      ),
     dependencies,
   };
 }

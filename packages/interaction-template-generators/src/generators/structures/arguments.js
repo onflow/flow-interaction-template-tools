@@ -25,7 +25,7 @@ export function arg({ tag, type, index, messages = [] }) {
   for (const message of messages) {
     fcl.invariant(
       typeof message === "object",
-      "generateArgument({ messages }) Error: each messages must be an object"
+      "generateArgument({ messages }) Error: each message must be an object"
     );
     fcl.invariant(
       message.tag === MESSAGE,
@@ -35,12 +35,12 @@ export function arg({ tag, type, index, messages = [] }) {
 
   return {
     tag: ARGUMENT,
-    xform: () => ({
+    xform: async () => ({
       [tag]: {
         index,
         type,
-        messages: messages.reduce(
-          (acc, msg) => ({ ...acc, ...msg.xform() }),
+        messages: await messages.reduce(
+          async (acc, msg) => ({ ...acc, ...(await msg.xform()) }),
           {}
         ),
       },
@@ -71,7 +71,11 @@ export function args(ags = []) {
 
   return {
     tag: ARGUMENTS,
-    xform: () => ags.reduce((acc, arg) => ({ ...acc, ...arg.xform() }), {}),
+    xform: async () =>
+      await ags.reduce(
+        async (acc, arg) => ({ ...acc, ...(await arg.xform()) }),
+        {}
+      ),
     ags,
   };
 }

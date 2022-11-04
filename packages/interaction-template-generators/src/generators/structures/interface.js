@@ -13,7 +13,7 @@ export function iface(iface) {
 
   return {
     tag: INTERFACE,
-    xform: () => iface,
+    xform: async () => iface,
     iface,
   };
 }

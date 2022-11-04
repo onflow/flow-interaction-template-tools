@@ -101,18 +101,16 @@ export async function template({
 
   let template = genTemplate();
 
-  template.data.type = type.xform();
-  template.data.interface = iface.xform();
-  template.data.messages = messages.xform();
-  template.data.cadence = cadence.xform();
-  template.data.dependencies = dependencies.xform();
-  template.data.arguments = args.xform();
+  template.data.type = await type.xform();
+  template.data.interface = await iface.xform();
+  template.data.messages = await messages.xform();
+  template.data.cadence = await cadence.xform();
+  template.data.dependencies = await dependencies.xform();
+  template.data.arguments = await args.xform();
 
   template.id = await fcl.InteractionTemplateUtils.generateTemplateId({
     template,
   });
-
-  console.log(JSON.stringify(template));
 
   return template;
 }

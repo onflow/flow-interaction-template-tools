@@ -9,7 +9,7 @@ export function type(type) {
 
   return {
     tag: TYPE,
-    xform: () => type,
+    xform: async () => type,
     type,
   };
 }

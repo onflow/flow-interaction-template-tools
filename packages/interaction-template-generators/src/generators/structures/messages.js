@@ -13,7 +13,7 @@ export function messageTranslation({ bcp47tag, translation }) {
 
   return {
     tag: MESSAGE_TRANSLATION,
-    xform: () => ({ [bcp47tag]: translation }),
+    xform: async () => ({ [bcp47tag]: translation }),
     bcp47tag,
     translation,
   };
@@ -43,10 +43,13 @@ export function message({ tag, translations = [] }) {
 
   return {
     tag: MESSAGE,
-    xform: () => ({
+    xform: async () => ({
       [tag]: {
-        i18n: translations.reduce(
-          (acc, translation) => ({ ...acc, ...translation.xform() }),
+        i18n: await translations.reduce(
+          async (acc, translation) => ({
+            ...acc,
+            ...(await translation.xform()),
+          }),
           {}
         ),
       },
@@ -74,8 +77,11 @@ export function messages(messages = []) {
 
   return {
     tag: MESSAGES,
-    xform: () =>
-      messages.reduce((acc, msg) => ({ ...acc, ...msg.xform() }), {}),
+    xform: async () =>
+      await messages.reduce(
+        async (acc, msg) => ({ ...acc, ...(await msg.xform()) }),
+        {}
+      ),
     messages,
   };
 }
