@@ -7,6 +7,9 @@ import {
   ARGUMENTS,
   CADENCE,
 } from "../tags";
+import { type as generateType } from "./type";
+import { iface as generateIface } from "./interface";
+import { cadence as generateCadence } from "./cadence";
 
 const _template = `{
   "f_type": "InteractionTemplate",
@@ -32,6 +35,16 @@ export async function template({
   dependencies,
   args,
 }) {
+  if (typeof type === "string") {
+    type = generateType(type);
+  }
+  if (typeof iface === "string") {
+    iface = generateIface(iface);
+  }
+  if (typeof cadence === "string") {
+    cadence = generateCadence(cadence);
+  }
+
   fcl.invariant(
     typeof type === "object",
     "generateTemplate({ type }) Error: type must be an object"
