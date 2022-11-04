@@ -1,0 +1,50 @@
+{
+  "name": "@onflow/interaction-template-generators",
+  "version": "0.0.1",
+  "description": "Interaction Template Generators",
+  "license": "Apache-2.0",
+  "author": "Dapper Labs <dev@dapperlabs.com>",
+  "homepage": "https://onflow.org",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/onflow/flow-interaction-template-tools.git"
+  },
+  "bugs": {
+    "url": "https://github.com/onflow/flow-interaction-template-tools/issues"
+  },
+  "jest": {
+    "transform": {
+      ".js": "jest-esm-transformer"
+    },
+    "globals": {
+      "window": {},
+      "PACKAGE_CURRENT_VERSION": "TESTVERSION"
+    }
+  },
+  "source": "src/interaction-template-generators.js",
+  "main": "dist/interaction-template-generators.js",
+  "module": "dist/interaction-template-generators.module.js",
+  "unpkg": "dist/interaction-template-generators.umd.js",
+  "scripts": {
+    "prepublishOnly": "npm test && npm run build",
+    "test": "jest",
+    "build": "fcl-bundle",
+    "test:watch": "jest --watch",
+    "start": "fcl-bundle --watch"
+  },
+  "devDependencies": {
+    "@onflow/fcl-bundle": "^1.2.0",
+    "better-sqlite3": "^7.6.2",
+    "jest": "^27.0.6",
+    "jest-esm-transformer": "1.0.0"
+  },
+  "dependencies": {
+    "@babel/runtime": "^7.18.9",
+    "@onflow/config": "^1.0.3",
+    "@onflow/util-invariant": "^1.0.2",
+    "@onflow/util-logger": "^1.1.1"
+  },
+  "peerDependencies": {
+    "@onflow/fcl": "^1.3.0"
+  }
+}
