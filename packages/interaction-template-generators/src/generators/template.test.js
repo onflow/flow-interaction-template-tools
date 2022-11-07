@@ -125,4 +125,66 @@ describe("template", () => {
 
     expect(template).toStrictEqual(result1);
   });
+
+  test("makes a valid interaction template with strings passed where available and multiple contracts", async () => {
+    const template = await FLIX.template({
+      type: "script",
+      iface: "a1b2",
+      messages: [
+        FLIX.message({
+          tag: "title",
+          translations: [
+            FLIX.messageTranslation({
+              bcp47tag: "en-US",
+              translation: "hello world",
+            }),
+          ],
+        }),
+      ],
+      cadence:
+        "pub fun main(msg: String): String { return 'hello world, ' + msg }",
+      dependencies: [
+        FLIX.dependency({
+          addressPlaceholder: "0xCONTRACT_A",
+          contracts: [
+            FLIX.dependencyContract({
+              contractName: "ContractA",
+              networks: [
+                FLIX.dependencyContractByNetwork({
+                  network: "testnet",
+                  contractName: "ContractA",
+                  address: "0xABC123DEF456",
+                  fqAddress: "A.0xABC123DEF456.ContractA",
+                  pin: "a1",
+                  pinBlockHeight: 123456,
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+      args: [
+        FLIX.arg({
+          tag: "msg",
+          type: "String",
+          index: 0,
+          messages: [
+            FLIX.message({
+              tag: "title",
+              translations: [
+                FLIX.messageTranslation({
+                  bcp47tag: "en-US",
+                  translation: "A message",
+                }),
+              ],
+            }),
+          ],
+        }),
+      ],
+    });
+
+    console.log("TEMPLATE", template);
+
+    expect(template).toStrictEqual(result1);
+  });
 });

@@ -6,6 +6,10 @@ export function type(type) {
     typeof type === "string",
     "generateType(type) Error - type must be a string"
   );
+  fcl.invariant(
+    type === "script" || type === "transaction",
+    "generateType(type) Error - type must be either 'script' or 'transaction'"
+  );
 
   return {
     tag: TYPE,

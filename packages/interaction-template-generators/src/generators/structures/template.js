@@ -10,6 +10,9 @@ import {
 import { type as generateType } from "./type";
 import { iface as generateIface } from "./interface";
 import { cadence as generateCadence } from "./cadence";
+import { messages as generateMessages } from "./messages";
+import { dependencies as generateDependencies } from "./dependencies";
+import { args as generateArguments } from "./arguments";
 
 const _template = `{
   "f_type": "InteractionTemplate",
@@ -43,6 +46,15 @@ export async function template({
   }
   if (typeof cadence === "string") {
     cadence = generateCadence(cadence);
+  }
+  if (Array.isArray(messages)) {
+    messages = generateMessages(messages);
+  }
+  if (Array.isArray(dependencies)) {
+    dependencies = generateDependencies(dependencies);
+  }
+  if (Array.isArray(args)) {
+    args = generateArguments(args);
   }
 
   fcl.invariant(

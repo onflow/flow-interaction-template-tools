@@ -47,10 +47,10 @@ export function message({ tag, translations = [] }) {
       [tag]: {
         i18n: await translations.reduce(
           async (acc, translation) => ({
-            ...acc,
+            ...(await acc),
             ...(await translation.xform()),
           }),
-          {}
+          Promise.resolve({})
         ),
       },
     }),
@@ -79,8 +79,8 @@ export function messages(messages = []) {
     tag: MESSAGES,
     xform: async () =>
       await messages.reduce(
-        async (acc, msg) => ({ ...acc, ...(await msg.xform()) }),
-        {}
+        async (acc, msg) => ({ ...(await acc), ...(await msg.xform()) }),
+        Promise.resolve({})
       ),
     messages,
   };

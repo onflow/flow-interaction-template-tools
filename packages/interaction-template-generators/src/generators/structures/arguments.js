@@ -40,8 +40,8 @@ export function arg({ tag, type, index, messages = [] }) {
         index,
         type,
         messages: await messages.reduce(
-          async (acc, msg) => ({ ...acc, ...(await msg.xform()) }),
-          {}
+          async (acc, msg) => ({ ...(await acc), ...(await msg.xform()) }),
+          Promise.resolve({})
         ),
       },
     }),
@@ -73,8 +73,8 @@ export function args(ags = []) {
     tag: ARGUMENTS,
     xform: async () =>
       await ags.reduce(
-        async (acc, arg) => ({ ...acc, ...(await arg.xform()) }),
-        {}
+        async (acc, arg) => ({ ...(await acc), ...(await arg.xform()) }),
+        Promise.resolve({})
       ),
     ags,
   };
