@@ -6,14 +6,10 @@ import {
   DEPENDENCY_CONTRACT_BY_NETWORK,
 } from "../tags.js";
 
-export function dependencyContractByNetwork({
-  network,
-  contractName,
-  address,
-  fqAddress,
-  pin,
-  pinBlockHeight,
-}) {
+export function dependencyContractByNetwork(
+  { network, contractName, address, fqAddress, pin, pinBlockHeight },
+  opts = {}
+) {
   fcl.invariant(
     typeof network === "string",
     "generateDependencyContractByNetwork({ network }) Error: network must be a string"
@@ -26,26 +22,46 @@ export function dependencyContractByNetwork({
     typeof fqAddress === "string",
     "generateDependencyContractByNetwork({ fqAddress }) Error: fqAddress must be a string"
   );
-  fcl.invariant(
-    typeof pin === "string",
-    "generateDependencyContractByNetwork({ pin }) Error: pin must be a string"
-  );
-  fcl.invariant(
-    typeof pinBlockHeight === "number",
-    "generateDependencyContractByNetwork({ pinBlockHeight }) Error: pinBlockHeight must be a number"
-  );
+  if (pin) {
+    fcl.invariant(
+      typeof pin === "string",
+      "generateDependencyContractByNetwork({ pin }) Error: pin must be a string"
+    );
+  }
+  if (pinBlockHeight) {
+    fcl.invariant(
+      typeof pinBlockHeight === "number",
+      "generateDependencyContractByNetwork({ pinBlockHeight }) Error: pinBlockHeight must be a number"
+    );
+  }
 
   return {
     tag: DEPENDENCY_CONTRACT_BY_NETWORK,
-    xform: async () => ({
-      [network]: {
-        address,
-        contract: contractName,
-        fq_address: fqAddress,
-        pin,
-        pin_block_height: pinBlockHeight,
-      },
-    }),
+    xform: async () => {
+      if (!pin && !pinBlockHeight) {
+        pin =
+          await fcl.InteractionTemplateUtils.generateDependencyPinAtLatestSealedBlock(
+            { address, contractName },
+            opts
+          );
+        const latestSealedBlock = await fcl.block({ sealed: true }, opts);
+        pinBlockHeight = latestSealedBlock?.height;
+      } else if (!pin) {
+        pin = await fcl.InteractionTemplateUtils.generateDependencyPin(
+          { address, contractName, blockHeight: pinBlockHeight },
+          opts
+        );
+      }
+      return {
+        [network]: {
+          address,
+          contract: contractName,
+          fq_address: fqAddress,
+          pin,
+          pin_block_height: pinBlockHeight,
+        },
+      };
+    },
     network,
     address,
     fqAddress,
