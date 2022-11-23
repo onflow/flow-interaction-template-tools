@@ -18,9 +18,6 @@ import { auditSplashTitle } from "../../utils/splashscreen";
 import { sign } from "../../utils/crypto/sign";
 import { signSendAuditTransaction } from "../../utils/audit/sign-send-audit-transaction";
 
-const rightPaddedHexBuffer = (value: string, pad: number) =>
-  Buffer.from(value.padEnd(pad * 2, "0"), "hex");
-
 export default class Generate extends Command {
   static description = "Generate transaction templates from .cdc files.";
 
