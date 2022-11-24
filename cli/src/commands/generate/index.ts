@@ -10,9 +10,7 @@ import { question as selectCDCFiles } from "../../questions/generate/select-cdc-
 import { question as selectInteractionType } from "../../questions/generate/interaction-type";
 import { question as inputInterfaceID } from "../../questions/generate/interface-id";
 import { question as inputMessages } from "../../questions/generate/messages";
-import { question as inputAuthor } from "../../questions/generate/author";
 import { question as inputArguments } from "../../questions/generate/arguments";
-import { question as inputVersion } from "../../questions/generate/version";
 import { generateTemplate } from "../../utils/template/generate-template";
 import {
   generateTemplateMonad,
