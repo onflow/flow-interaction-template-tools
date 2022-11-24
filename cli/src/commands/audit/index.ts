@@ -23,7 +23,12 @@ export default class Generate extends Command {
 
   static examples = [`$ flowplate audit ./src/cadence`];
 
-  static flags = {};
+  static flags = {
+    flowJsonPath: Flags.string({
+      char: "f",
+      summary: "Path to a flow.json configuration file.",
+    }),
+  };
 
   static args = [
     {
@@ -41,10 +46,15 @@ export default class Generate extends Command {
 
     let files: File[] = await readFiles(path);
 
-    const flowJSONFiles = await readFiles("flow.json");
+    const flowJSONFiles = await readFiles(flags.flowJsonPath || "flow.json");
     const flowJSON = flowJSONFiles[0]
       ? JSON.parse(flowJSONFiles[0].content)
       : null;
+
+    if (flowJSON === null) {
+      logger.error("❌ Error: No flow.json file found.");
+      return;
+    }
 
     // If more than one file found, ask which files they want to generate templates for.
     files = await selectTemplateFiles(files);

@@ -1,5 +1,6 @@
-import chalk from 'chalk'
+import chalk from "chalk";
 
 export const logger = {
-    default: (...args: any[]) => console.log(chalk.whiteBright.bold(...args))
-}
+  default: (...args: any[]) => console.log(chalk.bold(...args)),
+  error: (...args: any[]) => console.log(chalk.red.bold(...args)),
+};
