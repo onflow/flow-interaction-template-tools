@@ -111,8 +111,6 @@ export async function generateTemplate({
   let template = genTemplate();
   template.data.type = type;
   template.data.interface = iface;
-  // template.author = author
-  // template.data.version = version
   template.data.messages = messages;
   template.data.cadence = cadence;
   template.data.dependencies = deps;

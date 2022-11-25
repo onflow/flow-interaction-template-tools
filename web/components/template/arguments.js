@@ -15,9 +15,9 @@ import {
   Stack,
   Button,
   Select,
-} from "@chakra-ui/react";
-import { Formik, FieldArray, Field, useFormik } from "formik";
-import { tags } from "./utils/bcp47-tags";
+} from "@chakra-ui/react"
+import { Formik, FieldArray, Field, useFormik } from "formik"
+import { tags } from "./utils/bcp47-tags"
 
 import {
   genNetwork,
@@ -27,7 +27,7 @@ import {
   genArgument,
   genMessageTranslation,
   genMessage,
-} from "./utils/form-type-generators.js";
+} from "./utils/form-type-generators.js"
 
 export const Arguments = ({ values }) => {
   return (
@@ -47,7 +47,7 @@ export const Arguments = ({ values }) => {
             </Button>
           ) : (
             values?.argumentKeys.map((argumentKey, argumentKeyIndex) => (
-              <Box key={`argumentKeys-${argumentKeyIndex}`}>
+              <Box key={`argumentKeys-${argumentKeyIndex}`} mt={2} mb={2}>
                 <Field
                   key={`argumentKeys-${argumentKeyIndex}-input`}
                   name={`argumentKeys[${argumentKeyIndex}].label`}
@@ -70,138 +70,187 @@ export const Arguments = ({ values }) => {
                   + Insert Below
                 </Button>
 
-                <Box marginLeft="4" marginBottom="4">
-                  <FormLabel htmlFor={`argumentKeys-${argumentKeyIndex}-type`}>
-                    Argument Type
-                  </FormLabel>
-                  <FormHelperText>Type of this argument</FormHelperText>
-                  <Field
-                    key={`argumentKeys-${argumentKeyIndex}-type`}
-                    name={`argumentKeys[${argumentKeyIndex}].type`}
-                    as={Input}
-                  />
-                </Box>
-
-                <Box marginLeft="0" marginBottom="4">
-                  <Box marginLeft="4" marginBottom="4">
+                <Box ml={2} mt={2} mb={2} borderLeft="1px" pl={4}>
+                  <Box mt={2} mb={2}>
                     <FormLabel
-                      htmlFor={`argumentKeys-${argumentKeyIndex}-messages`}
+                      htmlFor={`argumentKeys-${argumentKeyIndex}-type`}
                     >
-                      Argument Messages
+                      Argument Type
                     </FormLabel>
-                    <FormHelperText>Messages for this argument</FormHelperText>
+                    <FormHelperText>Type of this argument</FormHelperText>
+                    <Field
+                      key={`argumentKeys-${argumentKeyIndex}-type`}
+                      name={`argumentKeys[${argumentKeyIndex}].type`}
+                      as={Input}
+                    />
+                  </Box>
 
-                    <FieldArray
-                      name={`argumentKeys[${argumentKeyIndex}].messages`}
-                      render={(arrayHelpersMessages) =>
-                        (values?.argumentKeys[argumentKeyIndex].messages).map(
-                          (argumentKeyMessage, argumentKeyMessageIndex) => (
-                            <Box marginBottom="4">
-                              <Field
-                                key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-input`}
-                                name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].key`}
-                                as={Input}
-                              />
-                              <Button
-                                key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-remove`}
-                                type="button"
-                                onClick={() =>
-                                  arrayHelpersMessages.remove(
-                                    argumentKeyMessageIndex
-                                  )
-                                }
-                              >
-                                - Remove
-                              </Button>
-                              <Button
-                                key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-add`}
-                                type="button"
-                                onClick={() =>
-                                  arrayHelpersMessages.insert(
-                                    argumentKeyMessageIndex + 1,
-                                    genArgumentMessage("title")
-                                  )
-                                }
-                              >
-                                + Insert Below
-                              </Button>
+                  <Box mt={2} mb={2}>
+                    <Box>
+                      <FormLabel
+                        htmlFor={`argumentKeys-${argumentKeyIndex}-messages`}
+                      >
+                        Argument Messages
+                      </FormLabel>
+                      <FormHelperText>
+                        Messages for this argument
+                      </FormHelperText>
 
-                              <Box marginLeft="4" marginBottom="4">
-                                <FormLabel
-                                  htmlFor={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}`}
-                                >
-                                  Argument Message Translations
-                                </FormLabel>
-                                <FormHelperText>
-                                  Translations for this argument Messsage
-                                </FormHelperText>
+                      <FieldArray
+                        name={`argumentKeys[${argumentKeyIndex}].messages`}
+                        render={(arrayHelpersMessages) =>
+                          values?.argumentKeys[argumentKeyIndex].messages
+                            .length === 0 ? (
+                            <Button
+                              key={`argumentKeys-${argumentKeyIndex}-add`}
+                              type="button"
+                              onClick={() =>
+                                arrayHelpersMessages.insert(
+                                  0,
+                                  genArgumentMessage("title")
+                                )
+                              }
+                            >
+                              + Insert
+                            </Button>
+                          ) : (
+                            (values?.argumentKeys[
+                              argumentKeyIndex
+                            ].messages).map(
+                              (argumentKeyMessage, argumentKeyMessageIndex) => (
+                                <Box marginBottom="4">
+                                  <Field
+                                    key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-input`}
+                                    name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].key`}
+                                    as={Input}
+                                  />
+                                  <Button
+                                    key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-remove`}
+                                    type="button"
+                                    onClick={() =>
+                                      arrayHelpersMessages.remove(
+                                        argumentKeyMessageIndex
+                                      )
+                                    }
+                                  >
+                                    - Remove
+                                  </Button>
+                                  <Button
+                                    key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-add`}
+                                    type="button"
+                                    onClick={() =>
+                                      arrayHelpersMessages.insert(
+                                        argumentKeyMessageIndex + 1,
+                                        genArgumentMessage("title")
+                                      )
+                                    }
+                                  >
+                                    + Insert Below
+                                  </Button>
 
-                                <FieldArray
-                                  name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations`}
-                                  render={(arrayHelpersTranslations) =>
-                                    (values?.argumentKeys[
-                                      argumentKeyIndex
-                                    ].messages[
-                                      argumentKeyMessageIndex
-                                    ].translations).map(
-                                      (
-                                        messageKeyMessageTranslation,
-                                        messageKeyMessageTranslationIndex
-                                      ) => (
-                                        <Box
-                                          key={`argumentKeys-${argumentKeyIndex}-messages-${messageKeyMessageTranslationIndex}-`}
-                                        >
-                                          <Field
-                                            key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}`}
-                                            name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations[${messageKeyMessageTranslationIndex}].value`}
-                                            type="string"
-                                            as={Input}
-                                          />
-                                          <Field
-                                            key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-select`}
-                                            name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations[${messageKeyMessageTranslationIndex}].name`}
-                                            type="select"
-                                            as={Select}
-                                          >
-                                            {tags.map((tag) => (
-                                              <option>{tag}</option>
-                                            ))}
-                                          </Field>
+                                  <Box
+                                    ml={2}
+                                    mt={2}
+                                    mb={2}
+                                    borderLeft={"1px"}
+                                    paddingLeft={4}
+                                  >
+                                    <FormLabel
+                                      htmlFor={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}`}
+                                    >
+                                      Argument Message Translations
+                                    </FormLabel>
+                                    <FormHelperText>
+                                      Translations for this argument Messsage
+                                    </FormHelperText>
+
+                                    <FieldArray
+                                      name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations`}
+                                      render={(arrayHelpersTranslations) =>
+                                        (values?.argumentKeys[argumentKeyIndex]
+                                          .messages[argumentKeyMessageIndex]
+                                          .translations).length === 0 ? (
                                           <Button
-                                            key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-remove`}
-                                            type="button"
-                                            onClick={() =>
-                                              arrayHelpersTranslations.remove(
-                                                messageKeyMessageTranslationIndex
-                                              )
-                                            }
-                                          >
-                                            - Remove
-                                          </Button>
-                                          <Button
-                                            key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-add`}
+                                            key={`argumentKeys-${argumentKeyIndex}-messages-add`}
                                             type="button"
                                             onClick={() =>
                                               arrayHelpersTranslations.insert(
-                                                messageKeyMessageTranslationIndex +
-                                                  1,
+                                                0,
                                                 genArgumentMessageTranslation()
                                               )
                                             }
                                           >
-                                            + Insert Below
+                                            + Insert
                                           </Button>
-                                        </Box>
-                                      )
-                                    )
-                                  }
-                                />
-                              </Box>
-                            </Box>
+                                        ) : (
+                                          (values?.argumentKeys[
+                                            argumentKeyIndex
+                                          ].messages[
+                                            argumentKeyMessageIndex
+                                          ].translations).map(
+                                            (
+                                              messageKeyMessageTranslation,
+                                              messageKeyMessageTranslationIndex
+                                            ) => (
+                                              <Box
+                                                key={`argumentKeys-${argumentKeyIndex}-messages-${messageKeyMessageTranslationIndex}-`}
+                                                mt={2}
+                                                mb={2}
+                                              >
+                                                <Field
+                                                  key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}`}
+                                                  name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations[${messageKeyMessageTranslationIndex}].value`}
+                                                  type="string"
+                                                  as={Input}
+                                                />
+                                                <Field
+                                                  key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-select`}
+                                                  name={`argumentKeys[${argumentKeyIndex}].messages[${argumentKeyMessageIndex}].translations[${messageKeyMessageTranslationIndex}].name`}
+                                                  type="select"
+                                                  as={Select}
+                                                >
+                                                  {tags.map((tag) => (
+                                                    <option>{tag}</option>
+                                                  ))}
+                                                </Field>
+                                                <Button
+                                                  key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-remove`}
+                                                  type="button"
+                                                  onClick={() =>
+                                                    arrayHelpersTranslations.remove(
+                                                      messageKeyMessageTranslationIndex
+                                                    )
+                                                  }
+                                                >
+                                                  - Remove
+                                                </Button>
+                                                <Button
+                                                  key={`argumentKeys-${argumentKeyIndex}-messages-${argumentKeyMessageIndex}-translations-${messageKeyMessageTranslationIndex}-add`}
+                                                  type="button"
+                                                  onClick={() =>
+                                                    arrayHelpersTranslations.insert(
+                                                      messageKeyMessageTranslationIndex +
+                                                        1,
+                                                      genArgumentMessageTranslation()
+                                                    )
+                                                  }
+                                                >
+                                                  + Insert Below
+                                                </Button>
+                                              </Box>
+                                            )
+                                          )
+                                        )
+                                      }
+                                    />
+                                  </Box>
+                                </Box>
+                              )
+                            )
                           )
-                        )
-                      }
-                    />
+                        }
+                      />
+                    </Box>
                   </Box>
                 </Box>
               </Box>
@@ -210,5 +259,5 @@ export const Arguments = ({ values }) => {
         }
       />
     </Box>
-  );
-};
+  )
+}

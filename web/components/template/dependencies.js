@@ -15,9 +15,9 @@ import {
   Stack,
   Button,
   Select,
-} from "@chakra-ui/react";
-import { Formik, FieldArray, Field, useFormik } from "formik";
-import { networks } from "./utils/network-tags";
+} from "@chakra-ui/react"
+import { Formik, FieldArray, Field, useFormik } from "formik"
+import { networks } from "./utils/network-tags"
 
 import {
   genNetwork,
@@ -28,10 +28,10 @@ import {
   genArgument,
   genMessageTranslation,
   genMessage,
-} from "./utils/form-type-generators.js";
+} from "./utils/form-type-generators.js"
 
 export const Dependencies = ({ values }) => {
-  console.log("dependencies = ", values.dependencies);
+  console.log("dependencies = ", values.dependencies)
   return (
     <Box marginTop="4">
       <FormLabel htmlFor="dependencies">Template Dependencies</FormLabel>
@@ -50,7 +50,7 @@ export const Dependencies = ({ values }) => {
             </Button>
           ) : (
             (values?.dependencies).map((dependency, dependencyIndex) => (
-              <Box key={`dependencies-${dependencyIndex}`}>
+              <Box key={`dependencies-${dependencyIndex}`} mt={2} mb={2}>
                 <Field
                   key={`dependencies-${dependencyIndex}-input`}
                   name={`dependencies[${dependencyIndex}].placeholder`}
@@ -74,7 +74,7 @@ export const Dependencies = ({ values }) => {
                   + Insert Below
                 </Button>
 
-                <Box marginLeft="4" marginBottom="4">
+                <Box ml={2} mt={2} mb={2} pl={4} borderLeft={"1px"}>
                   <FormLabel
                     htmlFor={`dependencies-${dependencyIndex}-networks`}
                   >
@@ -84,113 +84,154 @@ export const Dependencies = ({ values }) => {
                   <FieldArray
                     name="dependencies[${dependencyIndex}].contracts"
                     render={(arrayHelpersContract) =>
-                      (values?.dependencies[dependencyIndex].contracts).map(
-                        (dependencyContract, dependencyContractIndex) => (
-                          <Box
-                            key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}`}
-                          >
-                            <Field
-                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}.value`}
-                              name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].name`}
-                              type="string"
-                              as={Input}
-                            />
-
-                            <Button
-                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-remove`}
-                              type="button"
-                              onClick={() =>
-                                arrayHelpersContract.remove(
-                                  dependencyContractIndex
-                                )
-                              }
+                      values?.dependencies[dependencyIndex].contracts.length ===
+                      0 ? (
+                        <Button
+                          key={`dependencies-${dependencyIndex}-contracts-add`}
+                          type="button"
+                          onClick={() =>
+                            arrayHelpersContract.insert(
+                              0,
+                              genDependencyContract()
+                            )
+                          }
+                        >
+                          + Insert
+                        </Button>
+                      ) : (
+                        (values?.dependencies[dependencyIndex].contracts).map(
+                          (dependencyContract, dependencyContractIndex) => (
+                            <Box
+                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}`}
+                              mt={2}
+                              mb={2}
                             >
-                              - Remove
-                            </Button>
-                            <Button
-                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-add`}
-                              type="button"
-                              onClick={() =>
-                                arrayHelpersContract.insert(
-                                  dependencyContractIndex + 1,
-                                  genDependencyContract()
-                                )
-                              }
-                            >
-                              + Insert Below
-                            </Button>
+                              <Field
+                                key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}.value`}
+                                name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].name`}
+                                type="string"
+                                as={Input}
+                              />
 
-                            <Box marginLeft="4" marginBottom="4">
-                              <FormLabel
-                                htmlFor={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks`}
-                              >
-                                Dependency networks
-                              </FormLabel>
-                              <FormHelperText>
-                                Networks for this dependency
-                              </FormHelperText>
-
-                              <FieldArray
-                                name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks`}
-                                render={(arrayHelpersNetworks) =>
-                                  (values?.dependencies[
-                                    dependencyIndex
-                                  ].contracts[
+                              <Button
+                                key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-remove`}
+                                type="button"
+                                onClick={() =>
+                                  arrayHelpersContract.remove(
                                     dependencyContractIndex
-                                  ].networks).map(
-                                    (
-                                      dependencyNetwork,
-                                      dependencyNetworkIndex
-                                    ) => (
-                                      <Box
-                                        key={`argumentKeys-${dependencyIndex}-networks-${dependencyNetworkIndex}-`}
-                                      >
-                                        <Field
-                                          key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-address`}
-                                          name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks[${dependencyNetworkIndex}].address`}
-                                          type="string"
-                                          as={Input}
-                                        />
-                                        <Field
-                                          key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-network`}
-                                          name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks[${dependencyNetworkIndex}].network`}
-                                          type="select"
-                                          as={Select}
-                                        >
-                                          {networks.map((nw) => (
-                                            <option>{nw}</option>
-                                          ))}
-                                        </Field>
-                                        <Button
-                                          key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-remove`}
-                                          type="button"
-                                          onClick={() =>
-                                            arrayHelpersNetworks.remove(
-                                              dependencyNetworkIndex
-                                            )
-                                          }
-                                        >
-                                          - Remove
-                                        </Button>
-                                        <Button
-                                          key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-add`}
-                                          type="button"
-                                          onClick={() =>
-                                            arrayHelpersNetworks.insert(
-                                              dependencyNetworkIndex + 1,
-                                              genNetwork()
-                                            )
-                                          }
-                                        >
-                                          + Insert Below
-                                        </Button>
-                                      </Box>
-                                    )
                                   )
                                 }
-                              />
+                              >
+                                - Remove
+                              </Button>
+                              <Button
+                                key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-add`}
+                                type="button"
+                                onClick={() =>
+                                  arrayHelpersContract.insert(
+                                    dependencyContractIndex + 1,
+                                    genDependencyContract()
+                                  )
+                                }
+                              >
+                                + Insert Below
+                              </Button>
+
+                              <Box
+                                ml={2}
+                                mt={2}
+                                mb={2}
+                                pl={4}
+                                borderLeft={"1px"}
+                              >
+                                <FormLabel
+                                  htmlFor={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks`}
+                                >
+                                  Dependency networks
+                                </FormLabel>
+                                <FormHelperText>
+                                  Networks for this dependency
+                                </FormHelperText>
+
+                                <FieldArray
+                                  name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks`}
+                                  render={(arrayHelpersNetworks) =>
+                                    values?.dependencies[dependencyIndex]
+                                      .contracts[dependencyContractIndex]
+                                      .networks.length === 0 ? (
+                                      <Button
+                                        key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-add`}
+                                        type="button"
+                                        onClick={() =>
+                                          arrayHelpersNetworks.insert(
+                                            0,
+                                            genNetwork()
+                                          )
+                                        }
+                                      >
+                                        + Insert
+                                      </Button>
+                                    ) : (
+                                      (values?.dependencies[
+                                        dependencyIndex
+                                      ].contracts[
+                                        dependencyContractIndex
+                                      ].networks).map(
+                                        (
+                                          dependencyNetwork,
+                                          dependencyNetworkIndex
+                                        ) => (
+                                          <Box
+                                            key={`argumentKeys-${dependencyIndex}-networks-${dependencyNetworkIndex}-`}
+                                          >
+                                            <Field
+                                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-address`}
+                                              name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks[${dependencyNetworkIndex}].address`}
+                                              type="string"
+                                              as={Input}
+                                            />
+                                            <Field
+                                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-network`}
+                                              name={`dependencies[${dependencyIndex}].contracts[${dependencyContractIndex}].networks[${dependencyNetworkIndex}].network`}
+                                              type="select"
+                                              as={Select}
+                                            >
+                                              {networks.map((nw) => (
+                                                <option>{nw}</option>
+                                              ))}
+                                            </Field>
+                                            <Button
+                                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-remove`}
+                                              type="button"
+                                              onClick={() =>
+                                                arrayHelpersNetworks.remove(
+                                                  dependencyNetworkIndex
+                                                )
+                                              }
+                                            >
+                                              - Remove
+                                            </Button>
+                                            <Button
+                                              key={`dependencies-${dependencyIndex}-contracts-${dependencyContractIndex}-networks-${dependencyNetworkIndex}-add`}
+                                              type="button"
+                                              onClick={() =>
+                                                arrayHelpersNetworks.insert(
+                                                  dependencyNetworkIndex + 1,
+                                                  genNetwork()
+                                                )
+                                              }
+                                            >
+                                              + Insert Below
+                                            </Button>
+                                          </Box>
+                                        )
+                                      )
+                                    )
+                                  }
+                                />
+                              </Box>
                             </Box>
-                          </Box>
+                          )
                         )
                       )
                     }
@@ -202,5 +243,5 @@ export const Dependencies = ({ values }) => {
         }
       />
     </Box>
-  );
-};
+  )
+}
