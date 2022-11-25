@@ -16,17 +16,17 @@ import {
   Button,
   Select,
   HStack,
-} from "@chakra-ui/react";
-import { Formik, FieldArray, Field, useFormik } from "formik";
-import { tags } from "../components/template/utils/bcp47-tags";
-import { useState, useRef, useEffect } from "react";
+} from "@chakra-ui/react"
+import { Formik, FieldArray, Field, useFormik } from "formik"
+import { tags } from "../components/template/utils/bcp47-tags"
+import { useState, useRef, useEffect } from "react"
 
-import { Messages } from "../components/template/messages";
-import { Arguments } from "../components/template/arguments";
-import { Dependencies } from "../components/template/dependencies";
+import { Messages } from "../components/template/messages"
+import { Arguments } from "../components/template/arguments"
+import { Dependencies } from "../components/template/dependencies"
 
-import { generateTemplate } from "../components/template/utils/gen-template.js";
-import { regenerateTemplateID } from "../components/template/utils/regenerate-template-id.js";
+import { generateTemplate } from "../components/template/utils/gen-template.js"
+import { regenerateTemplateID } from "../components/template/utils/regenerate-template-id.js"
 
 import {
   genNetwork,
@@ -36,25 +36,25 @@ import {
   genArgument,
   genMessageTranslation,
   genMessage,
-} from "../components/template/utils/form-type-generators.js";
+} from "../components/template/utils/form-type-generators.js"
 
 const Template = () => {
-  const [generatedTemplate, setGeneratedTemplate] = useState(
-    JSON.stringify({})
-  );
-  const templateTextAreaRef = useRef(null);
+  const [generatedTemplate, setGeneratedTemplate] = useState(JSON.stringify({}))
+  const [templateText, setTemplateText] = useState(JSON.stringify({}))
+  const templateTextAreaRef = useRef(null)
 
   useEffect(() => {
     if (templateTextAreaRef.current?.value) {
-      templateTextAreaRef.current.value = generatedTemplate;
+      templateTextAreaRef.current.value = generatedTemplate
     }
-  }, [generatedTemplate]);
+  }, [generatedTemplate])
 
   const regenTemplateID = async () => {
-    let newTemplate = await regenerateTemplateID(JSON.parse(generatedTemplate));
-    setGeneratedTemplate(JSON.stringify(newTemplate, null, 2));
-    alert("Regenerated Interaction Template");
-  };
+    let newTemplate = await regenerateTemplateID(JSON.parse(templateText))
+    setGeneratedTemplate(JSON.stringify(newTemplate, null, 2))
+    setTemplateText(JSON.stringify(newTemplate, null, 2))
+    alert("Regenerated Interaction Template")
+  }
 
   return (
     <Center bg="gray.200" minHeight="100vh" width="100vw" p="4">
@@ -99,11 +99,14 @@ const Template = () => {
                         cadence: values.cadence,
                         dependencies: values.dependencies,
                         argumentKeys: values.argumentKeys,
-                      });
+                      })
                       setGeneratedTemplate(
                         JSON.stringify(processedTemplate, null, 2)
-                      );
-                      alert("New Template Generated");
+                      )
+                      setTemplateText(
+                        JSON.stringify(processedTemplate, null, 2)
+                      )
+                      alert("New Template Generated")
                     }, 500)
                   }
                   validateOnChange={false}
@@ -114,7 +117,10 @@ const Template = () => {
 
                         <Box>
                           <FormLabel htmlFor="email">Template Type</FormLabel>
-                          <RadioGroup defaultValue="2">
+                          <FormHelperText>
+                            The type of Interaction this template is for.
+                          </FormHelperText>
+                          <RadioGroup defaultValue="2" mt={2} mb={2}>
                             <Stack spacing={5} direction="row">
                               <Field
                                 as={Radio}
@@ -134,9 +140,6 @@ const Template = () => {
                               </Field>
                             </Stack>
                           </RadioGroup>
-                          <FormHelperText>
-                            The type of Interaction this template is for.
-                          </FormHelperText>
                         </Box>
 
                         <hr />
@@ -145,11 +148,16 @@ const Template = () => {
                           <FormLabel htmlFor="template-interface">
                             (Optional) Template Interface
                           </FormLabel>
-                          <Field name={`templateInterface`} as={Input} />
                           <FormHelperText>
                             (Optional) The Interface ID this template conforms
                             to.
                           </FormHelperText>
+                          <Field
+                            name={`templateInterface`}
+                            as={Input}
+                            mt={2}
+                            mb={2}
+                          />
                         </Box>
 
                         <hr />
@@ -158,10 +166,10 @@ const Template = () => {
                           <FormLabel htmlFor="template-interface">
                             Template Cadence
                           </FormLabel>
-                          <Field name={`cadence`} as={Textarea} />
                           <FormHelperText>
                             The Cadence for this Template.
                           </FormHelperText>
+                          <Field name={`cadence`} as={Textarea} mt={2} mb={2} />
                         </Box>
 
                         <hr />
@@ -180,13 +188,7 @@ const Template = () => {
 
                         <Box marginTop="4">
                           <Button color="blue" type="submit">
-                            Submit
-                          </Button>
-                        </Box>
-
-                        <Box marginTop="4">
-                          <Button color="blue" onClick={regenTemplateID}>
-                            Regenerate Template
+                            Generate
                           </Button>
                         </Box>
                       </FormControl>
@@ -196,20 +198,29 @@ const Template = () => {
               </Box>
             </VStack>
 
-            <Textarea
-              width="50%"
-              height="100%"
-              ref={templateTextAreaRef}
-              defaultValue={generatedTemplate}
-              onChange={(e) => {
-                setGeneratedTemplate(e.target.value);
-              }}
-            ></Textarea>
+            <Box width="50%" height="100%">
+              {templateText !== generatedTemplate && (
+                <Box mb="2">
+                  <Button color="blue" onClick={regenTemplateID}>
+                    Regenerate ID
+                  </Button>
+                </Box>
+              )}
+              <Textarea
+                width="100%"
+                height="100%"
+                ref={templateTextAreaRef}
+                defaultValue={generatedTemplate}
+                onChange={(e) => {
+                  setTemplateText(e.target.value)
+                }}
+              ></Textarea>
+            </Box>
           </HStack>
         </VStack>
       </Box>
     </Center>
-  );
-};
+  )
+}
 
-export default Template;
+export default Template
