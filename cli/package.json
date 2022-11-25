@@ -1,15 +1,15 @@
 {
-  "name": "flowplate",
+  "name": "@onflow/flow-interaction-template-cli",
   "version": "0.1.0",
-  "description": "Flow template transaction CLI",
-  "author": "Jeffrey Doyle @JeffreyDoyle",
+  "description": "Flow Interaction Template CLI",
+  "license": "Apache-2.0",
+  "author": "Dapper Labs <dev@dapperlabs.com>",
   "bin": {
-    "flowplate": "./bin/run"
+    "flix": "./bin/run"
   },
-  "homepage": "https://github.com/JeffreyDoyle/flowplate",
-  "license": "MIT",
+  "homepage": "https://github.com/onflow/flow-interaction-template-tools",
   "main": "dist/index.js",
-  "repository": "JeffreyDoyle/flowplate",
+  "repository": "https://github.com/onflow/flow-interaction-template-tools",
   "files": [
     "/bin",
     "/dist",
@@ -56,8 +56,8 @@
     "typescript": "^4.4.3"
   },
   "oclif": {
-    "bin": "flowplate",
-    "dirname": "flowplate",
+    "bin": "flix",
+    "dirname": "flix",
     "commands": "./dist/commands",
     "plugins": [
       "@oclif/plugin-help",
