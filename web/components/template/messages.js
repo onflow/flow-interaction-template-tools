@@ -31,7 +31,7 @@ import {
 
 export const Messages = ({ values }) => {
   return (
-    <Box marginTop="4">
+    <Box mt={2} mb={2}>
       <FormLabel htmlFor="messageKeys">Template Messages</FormLabel>
       <FormHelperText>Messages for this template</FormHelperText>
       <FieldArray

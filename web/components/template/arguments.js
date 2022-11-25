@@ -31,7 +31,7 @@ import {
 
 export const Arguments = ({ values }) => {
   return (
-    <Box marginTop="4">
+    <Box mt={2} mb={2}>
       <FormLabel htmlFor="argumentKeys">Template Arguments</FormLabel>
       <FormHelperText>Argument Labels for this template</FormHelperText>
       <FieldArray

@@ -31,9 +31,8 @@ import {
 } from "./utils/form-type-generators.js"
 
 export const Dependencies = ({ values }) => {
-  console.log("dependencies = ", values.dependencies)
   return (
-    <Box marginTop="4">
+    <Box mt={2} mb={2}>
       <FormLabel htmlFor="dependencies">Template Dependencies</FormLabel>
       <FormHelperText>Dependencies of this template</FormHelperText>
 
