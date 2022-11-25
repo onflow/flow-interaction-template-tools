@@ -33,7 +33,8 @@ export default class Generate extends Command {
   static args = [
     {
       name: "path",
-      description: "Path to a folder or individual CDC file.",
+      description:
+        "Path to a folder or individual Interaction Template JSON file.",
       required: true,
     },
   ];

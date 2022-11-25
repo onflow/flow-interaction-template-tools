@@ -13,17 +13,23 @@ export default class Generate extends Command {
     `$ flowplate verify "./src/cadence/template.json" "0xABC123DEF456 `,
   ];
 
-  static flags = {};
+  static flags = {
+    flowJsonPath: Flags.string({
+      char: "f",
+      summary: "Path to a flow.json configuration file.",
+    }),
+  };
 
   static args = [
     {
       name: "templatePath",
-      description: "Path to a file containing an InteractionTemplate.",
+      description: "Path to an individual Interaction Template JSON file.",
       required: true,
     },
     {
       name: "auditorAddress",
-      description: "Address of an auditor.",
+      description:
+        "Address of an Auditor to verify if they have audited the Interaction Template.",
       required: true,
     },
   ];
@@ -38,7 +44,7 @@ export default class Generate extends Command {
 
     if (templateFiles.length > 1) return; // Cannot audit more than one template at a time
 
-    const flowJSONFiles = await readFiles("flow.json");
+    const flowJSONFiles = await readFiles(flags.flowJsonPath || "flow.json");
     const flowJSON = flowJSONFiles[0]
       ? JSON.parse(flowJSONFiles[0].content)
       : null;

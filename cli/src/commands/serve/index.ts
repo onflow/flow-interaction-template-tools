@@ -18,7 +18,8 @@ export default class Generate extends Command {
   static args = [
     {
       name: "path",
-      description: "Path to a folder or individual template json file.",
+      description:
+        "Path to a folder or individual Interaction Template JSON file.",
       required: true,
     },
     {
