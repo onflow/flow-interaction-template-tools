@@ -1,28 +1,28 @@
-import { Command, Flags } from "@oclif/core";
-import inquirer from "inquirer";
-import * as fcl from "@onflow/fcl";
-import { exec } from "child_process";
-import { logger } from "../../utils/logger";
-import { tags } from "../../utils/bcp47-tags";
-import { readFiles, File } from "../../utils/file/read-files";
-import { writeFile } from "../../utils/file/write-file";
-import { question as selectCDCFiles } from "../../questions/generate/select-cdc-files";
-import { question as selectInteractionType } from "../../questions/generate/interaction-type";
-import { question as inputInterfaceID } from "../../questions/generate/interface-id";
-import { question as inputMessages } from "../../questions/generate/messages";
-import { question as inputArguments } from "../../questions/generate/arguments";
-import { generateTemplate } from "../../utils/template/generate-template";
+import {Command, Flags} from "@oclif/core"
+import inquirer from "inquirer"
+import * as fcl from "@onflow/fcl"
+import {exec} from "node:child_process"
+import {logger} from "../../utils/logger"
+import {tags} from "../../utils/bcp47-tags"
+import {readFiles, File} from "../../utils/file/read-files"
+import {writeFile} from "../../utils/file/write-file"
+import {question as selectCDCFiles} from "../../questions/generate/select-cdc-files"
+import {question as selectInteractionType} from "../../questions/generate/interaction-type"
+import {question as inputInterfaceID} from "../../questions/generate/interface-id"
+import {question as inputMessages} from "../../questions/generate/messages"
+import {question as inputArguments} from "../../questions/generate/arguments"
+import {generateTemplate} from "../../utils/template/generate-template"
 import {
   generateTemplateMonad,
   iTemplateMonad,
-} from "../../utils/template/template-monad";
-import { generateSplashTitle } from "../../utils/splashscreen";
-import { generatePins } from "../../questions/generate/generate-pins";
+} from "../../utils/template/template-monad"
+import {generateSplashTitle} from "../../utils/splashscreen"
+import {generatePins} from "../../questions/generate/generate-pins"
 
 export default class Generate extends Command {
   static description = "Generate Interaction Templates from .cdc files.";
 
-  static examples = [`$ flowplate generate ./src/cadence`];
+  static examples = ["$ flowplate generate ./src/cadence"];
 
   static flags = {
     flowJsonPath: Flags.string({
@@ -40,81 +40,80 @@ export default class Generate extends Command {
   ];
 
   async run(): Promise<void> {
-    const { argv, args, flags } = await this.parse(Generate);
-    const { path } = args;
+    const {argv, args, flags} = await this.parse(Generate)
+    const {path} = args
 
-    generateSplashTitle();
+    generateSplashTitle()
 
     logger.warn(
-      "⚠️  Warning: The FLIX CLI is currently in early alpha. Please report any bugs by opening an issue here: https://github.com/onflow/flow-interaction-template-tools/issues/new"
-    );
+      "⚠️  Warning: The FLIX CLI is currently in early alpha. Please report any bugs by opening an issue here: https://github.com/onflow/flow-interaction-template-tools/issues/new",
+    )
 
-    let files: File[] = await readFiles(path);
+    let files: File[] = await readFiles(path)
 
-    const flowJSONFiles = await readFiles(flags.flowJsonPath || "flow.json");
-    const flowJSON = flowJSONFiles[0]
-      ? JSON.parse(flowJSONFiles[0].content)
-      : null;
+    const flowJSONFiles = await readFiles(flags.flowJsonPath || "flow.json")
+    const flowJSON = flowJSONFiles[0] ?
+      JSON.parse(flowJSONFiles[0].content) :
+      null
 
     if (flowJSON === null) {
-      logger.error("❌ Error: No flow.json file found.");
-      return;
+      logger.error("❌ Error: No flow.json file found.")
+      return
     }
 
     // If more than one file found, ask which files they want to generate templates for.
-    files = await selectCDCFiles(files);
+    files = await selectCDCFiles(files)
 
     for (let i = 0; i < files.length; i++) {
-      let file = files[i];
+      const file = files[i]
 
       logger.default(
         `\n🌱 [Template ${i + 1} / ${
           files.length
-        }] ⚙️  Generating template for ${file.path}\n\n----${file.path}----`
-      );
-      logger.default(file.content);
-      logger.default(`----\n`);
+        }] ⚙️  Generating template for ${file.path}\n\n----${file.path}----`,
+      )
+      logger.default(file.content)
+      logger.default("----\n")
 
-      let templateMonad = generateTemplateMonad(file, flowJSON);
+      let templateMonad = generateTemplateMonad(file, flowJSON)
 
-      let questions = [
+      const questions = [
         selectInteractionType,
         inputMessages,
         inputArguments,
         generatePins,
         inputInterfaceID,
-      ];
+      ]
 
       templateMonad = await questions.reduce(
         async (tm, question) => question(await tm),
-        Promise.resolve(templateMonad)
-      );
+        Promise.resolve(templateMonad),
+      )
 
-      let template = await generateTemplate(templateMonad);
+      const template = await generateTemplate(templateMonad)
 
       logger.default(
         "\n🌱 Template: \n\n",
         JSON.stringify(template, null, 2),
-        "\n"
-      );
+        "\n",
+      )
 
       const filePathLessCDC = file.path
-        .split(".")
-        .slice(0, file.path.split(".").length - 1)
-        .map((s) => (s === "" ? "." : s))
-        .join("");
-      let filePathParts = [filePathLessCDC];
-      filePathParts.push("template");
-      filePathParts.push("json");
-      let templateFilePath = filePathParts.join(".");
+      .split(".")
+      .slice(0, file.path.split(".").length - 1)
+      .map(s => (s === "" ? "." : s))
+      .join("")
+      const filePathParts = [filePathLessCDC]
+      filePathParts.push("template", "json")
+      const templateFilePath = filePathParts.join(".")
 
-      await writeFile(templateFilePath, JSON.stringify(template, null, 2));
+      await writeFile(templateFilePath, JSON.stringify(template, null, 2))
 
       logger.default(
-        `\n🌱 Saved interaction template to ${templateFilePath}\n`
-      );
+        `\n🌱 Saved interaction template to ${templateFilePath}\n`,
+      )
     }
 
-    logger.default("\n🌱🎉 Interaction template generation complete!\n");
+    logger.default("\n🌱🎉 Interaction template generation complete!\n")
   }
 }

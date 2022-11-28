@@ -1,5 +1,5 @@
-import * as fcl from "@onflow/fcl";
-import { iTemplateMonad } from "./template-monad";
+import * as fcl from "@onflow/fcl"
+import {iTemplateMonad} from "./template-monad"
 
 const template = `{
     "f_type": "InteractionTemplate",
@@ -13,9 +13,9 @@ const template = `{
       "dependencies": {},
       "arguments": {}
     }   
-}`;
+}`
 
-const genTemplate = () => JSON.parse(template);
+const genTemplate = () => JSON.parse(template)
 
 interface iGenerateTemplate {
   type: string;
@@ -34,17 +34,17 @@ export async function generateTemplate({
   dependencies,
   args,
 }: iTemplateMonad) {
-  let template = genTemplate();
-  template.data.type = type;
-  template.data.interface = iface;
-  template.data.messages = messages;
-  template.data.cadence = cadence;
-  template.data.dependencies = dependencies;
-  template.data.arguments = args;
+  const template = genTemplate()
+  template.data.type = type
+  template.data.interface = iface
+  template.data.messages = messages
+  template.data.cadence = cadence
+  template.data.dependencies = dependencies
+  template.data.arguments = args
 
   template.id = await fcl.InteractionTemplateUtils.generateTemplateId({
     template,
-  });
+  })
 
-  return template;
+  return template
 }

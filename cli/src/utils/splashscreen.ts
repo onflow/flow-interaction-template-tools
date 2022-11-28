@@ -1,4 +1,4 @@
-import { logger } from "./logger";
+import {logger} from "./logger"
 
 export function generateSplashTitle() {
   logger.default(`
@@ -16,7 +16,7 @@ export function generateSplashTitle() {
   ╚██████╔╝███████╗██║ ╚████║███████╗██║  ██║██║  ██║   ██║   ███████╗
    ╚═════╝ ╚══════╝╚═╝  ╚═══╝╚══════╝╚═╝  ╚═╝╚═╝  ╚═╝   ╚═╝   ╚══════╝
                                                                       
-`);
+`)
 }
 
 export function auditSplashTitle() {
@@ -35,7 +35,7 @@ export function auditSplashTitle() {
   ██║  ██║╚██████╔╝██████╔╝██║   ██║   
   ╚═╝  ╚═╝ ╚═════╝ ╚═════╝ ╚═╝   ╚═╝   
                                        
-`);
+`)
 }
 
 export function verifySplashTitle() {
@@ -54,5 +54,5 @@ export function verifySplashTitle() {
    ╚████╔╝ ███████╗██║  ██║██║██║        ██║   
     ╚═══╝  ╚══════╝╚═╝  ╚═╝╚═╝╚═╝        ╚═╝   
                                                
-`);
+`)
 }

@@ -1,4 +1,4 @@
-import { File } from "../file/read-files";
+import {File} from "../file/read-files"
 
 export interface iTemplateMonad {
   flowJSON?: { [key: string]: any };
@@ -13,7 +13,7 @@ export interface iTemplateMonad {
 
 export const generateTemplateMonad = (
   file: File,
-  flowJSON?: { [key: string]: any }
+  flowJSON?: { [key: string]: any },
 ): iTemplateMonad => ({
   flowJSON,
   file,
@@ -23,4 +23,4 @@ export const generateTemplateMonad = (
   cadence: file.content,
   dependencies: {},
   args: {},
-});
+})

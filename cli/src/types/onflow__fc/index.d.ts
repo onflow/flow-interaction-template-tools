@@ -9,7 +9,7 @@ declare module "@onflow/fcl" {
   export function authorizations(authzs: any[]): any;
   export function limit(num: any): any;
 
-  export const t: any;
+  export const t: any
 
   export namespace InteractionTemplateUtils {
     function generateDependencyPin(opts: {}): string;

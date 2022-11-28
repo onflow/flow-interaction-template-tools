@@ -1,62 +1,63 @@
-import inquirer from "inquirer";
-import chalk from "chalk";
-import { CliUx } from "@oclif/core";
-import * as fcl from "@onflow/fcl";
-import { logger } from "../../utils/logger";
-import crypto from "crypto";
-import { File } from "../../utils/file/read-files";
-import { iTemplateMonad } from "../../utils/template/template-monad";
+import inquirer from "inquirer"
+import chalk from "chalk"
+import {CliUx} from "@oclif/core"
+import * as fcl from "@onflow/fcl"
+import {logger} from "../../utils/logger"
+import crypto from "node:crypto"
+import {File} from "../../utils/file/read-files"
+import {iTemplateMonad} from "../../utils/template/template-monad"
 
 async function inputAddressForNetwork(
   file: File,
   address: string,
-  network: string
+  network: string,
 ): Promise<string> {
   return inquirer
-    .prompt([
-      {
-        type: "input",
-        message: `[${file?.path}] Input account address for ${address} on ${network}:`,
-        name: "address",
-        validate(answer) {
-          if (fcl.sansPrefix(answer).length !== 16) {
-            return "Account address must be 16 characters long";
-          }
-          return true;
-        },
+  .prompt([
+    {
+      type: "input",
+      message: `[${file?.path}] Input account address for ${address} on ${network}:`,
+      name: "address",
+      validate(answer) {
+        if (fcl.sansPrefix(answer).length !== 16) {
+          return "Account address must be 16 characters long"
+        }
+
+        return true
       },
-    ])
-    .then((answers) => {
-      return fcl.withPrefix(answers.address);
-    });
+    },
+  ])
+  .then(answers => {
+    return fcl.withPrefix(answers.address)
+  })
 }
 
-function findImports(cadence: string, isPlaceholder: boolean = false): iport[] {
-  let iports: iport[] = [];
+function findImports(cadence: string, isPlaceholder = false): iport[] {
+  const iports: iport[] = []
 
-  if (!cadence || cadence === "") return iports;
+  if (!cadence || cadence === "") return iports
 
-  let importsReg = /import \w+ from 0x\w+/g;
-  let fileImports = cadence.match(importsReg) || [];
+  const importsReg = /import \w+ from 0x\w+/g
+  const fileImports = cadence.match(importsReg) || []
   for (const fileImport of fileImports) {
-    let importReg = /import (\w+) from (0x\w+)/g;
-    let fileiport = importReg.exec(fileImport);
+    const importReg = /import (\w+) from (0x\w+)/g
+    const fileiport = importReg.exec(fileImport)
     if (fileiport) {
       if (isPlaceholder) {
         iports.push({
           addressPlaceholder: fileiport[2],
           contractName: fileiport[1],
-        });
+        })
       } else {
         iports.push({
           address: fileiport[2],
           contractName: fileiport[1],
-        });
+        })
       }
     }
   }
 
-  return iports;
+  return iports
 }
 
 interface iport {
@@ -75,85 +76,86 @@ interface iPins {
 }
 
 export async function generatePins(
-  templateMonad: iTemplateMonad
+  templateMonad: iTemplateMonad,
 ): Promise<iTemplateMonad> {
-  logger.default("\n🌱 Generating dependency pins\n");
+  logger.default("\n🌱 Generating dependency pins\n")
 
-  let file: File = templateMonad.file;
+  const file: File = templateMonad.file
 
-  let addressMemo: iAddressMemo = {
+  const addressMemo: iAddressMemo = {
     testnet: {},
     mainnet: {},
     emulator: {},
-  };
+  }
 
-  let pins: iPins = {};
+  const pins: iPins = {}
 
-  let iports: iport[] = findImports(file?.content, true);
+  const iports: iport[] = findImports(file?.content, true)
 
   if (iports.length === 0)
     return {
       ...templateMonad,
       dependencies: pins,
-    };
+    }
 
-  let networks = ["testnet", "mainnet", "emulator"];
+  const networks = ["testnet", "mainnet", "emulator"]
 
   for (const network of networks) {
-    let doesUserWantToGeneratePin: boolean = true;
+    let doesUserWantToGeneratePin = true
     await inquirer
-      .prompt([
-        {
-          type: "confirm",
-          message: `[${file?.path}] Do you want to generate a dependency pin for ${network}? :`,
-          name: "toGeneratePin",
-          default: true,
-          validate(answer) {
-            return true;
-          },
+    .prompt([
+      {
+        type: "confirm",
+        message: `[${file?.path}] Do you want to generate a dependency pin for ${network}? :`,
+        name: "toGeneratePin",
+        default: true,
+        validate(answer) {
+          return true
         },
-      ])
-      .then((answers) => {
-        doesUserWantToGeneratePin = answers.toGeneratePin;
-      });
-    if (!doesUserWantToGeneratePin) continue;
+      },
+    ])
+    .then(answers => {
+      doesUserWantToGeneratePin = answers.toGeneratePin
+    })
+    if (!doesUserWantToGeneratePin) continue
 
-    logger.default(`🌱 Generating dependency pin for ${network}...`);
+    logger.default(`🌱 Generating dependency pin for ${network}...`)
 
-    let networkIports: iport[] = iports.map((iport) => ({
+    const networkIports: iport[] = iports.map(iport => ({
       ...iport,
-    }));
+    }))
 
     for (const iport of networkIports) {
       if (!addressMemo?.[network]?.[iport?.addressPlaceholder!]) {
         const addr = await inputAddressForNetwork(
           file,
           iport?.addressPlaceholder!,
-          network
-        );
-        addressMemo[network][iport?.addressPlaceholder!] = addr;
+          network,
+        )
+        addressMemo[network][iport?.addressPlaceholder!] = addr
       }
-      iport.address = addressMemo[network][iport?.addressPlaceholder!];
+
+      iport.address = addressMemo[network][iport?.addressPlaceholder!]
     }
 
-    const accessNodeAPI = templateMonad?.flowJSON?.networks?.[network];
-    await fcl.config().put("accessNode.api", accessNodeAPI);
+    const accessNodeAPI = templateMonad?.flowJSON?.networks?.[network]
+    await fcl.config().put("accessNode.api", accessNodeAPI)
 
-    let latestSealedBlock = await fcl.block({ sealed: true });
-    let latestBlockPin = latestSealedBlock?.height;
+    const latestSealedBlock = await fcl.block({sealed: true})
+    const latestBlockPin = latestSealedBlock?.height
 
     for (const networkIport of networkIports) {
       CliUx.ux.action.start(
         chalk.whiteBright.bold(
-          `🌱 Generating dependency pin for ${networkIport.addressPlaceholder} on ${network}`
-        )
-      );
+          `🌱 Generating dependency pin for ${networkIport.addressPlaceholder} on ${network}`,
+        ),
+      )
 
       const pin = await fcl.InteractionTemplateUtils.generateDependencyPin({
         address: networkIport.address!,
         contractName: networkIport.contractName!,
         blockHeight: latestBlockPin,
-      });
+      })
 
       pins[networkIport.addressPlaceholder!] = {
         ...(pins?.[networkIport.addressPlaceholder!] || []),
@@ -169,14 +171,14 @@ export async function generatePins(
             pin_block_height: latestBlockPin,
           },
         },
-      };
+      }
 
-      CliUx.ux.action.stop(chalk.whiteBright.bold("Generated!"));
+      CliUx.ux.action.stop(chalk.whiteBright.bold("Generated!"))
     }
   }
 
   return {
     ...templateMonad,
     dependencies: pins,
-  };
+  }
 }
