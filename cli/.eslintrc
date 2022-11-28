@@ -1,6 +1,22 @@
 {
   "extends": [
+    "prettier",
     "oclif",
     "oclif-typescript"
-  ]
+  ],
+  "rules": {
+    "quotes": [ 1, "double" ],
+    "camelcase": 0,
+    "@typescript-eslint/no-unused-var": 0,
+    "@typescript-eslint/no-unused-vars": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "max-params": 0,
+    "@typescript-eslint/ban-types": 0,
+    "no-warning-comments": 0,
+    "no-await-in-loop": 0,
+    "@typescript-eslint/no-non-null-asserted-optional-chain": 0,
+    "unicorn/no-array-reduce": 0,
+    "no-return-await": 0,
+    "prefer-const": 0
+  }
 }
