@@ -16,4 +16,7 @@
 /web/yarn.lock
 /cli/flow.json
 
+/packages/interaction-template-generators/node_modules
+/packages/interaction-template-generators/package-lock.json
+
 **/.DS_Store
