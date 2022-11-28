@@ -40,6 +40,10 @@ export default class Generate extends Command {
 
     verifySplashTitle();
 
+    logger.warn(
+      "⚠️  Warning: The FLIX CLI is currently in early alpha. Please report any bugs by opening an issue here: https://github.com/onflow/flow-interaction-template-tools/issues/new"
+    );
+
     let templateFiles: File[] = await readFiles(templatePath);
 
     if (templateFiles.length > 1) return; // Cannot audit more than one template at a time

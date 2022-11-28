@@ -84,9 +84,7 @@ export default class Generate extends Command {
 
     app.listen(Number(port));
 
-    logger.default(
-      `\n---- 🌱🚀 Flowplates server running on port ${port} ! ----\n`
-    );
+    logger.default(`\n---- 🌱🚀 Server running on port ${port} ! ----\n`);
     logger.default(
       `🌱 http://localhost:${port}/templates/:template_id => InteractionTemplate`
     );

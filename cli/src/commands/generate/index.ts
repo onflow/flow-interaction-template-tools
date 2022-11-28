@@ -45,6 +45,10 @@ export default class Generate extends Command {
 
     generateSplashTitle();
 
+    logger.warn(
+      "⚠️  Warning: The FLIX CLI is currently in early alpha. Please report any bugs by opening an issue here: https://github.com/onflow/flow-interaction-template-tools/issues/new"
+    );
+
     let files: File[] = await readFiles(path);
 
     const flowJSONFiles = await readFiles(flags.flowJsonPath || "flow.json");
