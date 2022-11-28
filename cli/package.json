@@ -76,7 +76,7 @@
   },
   "bugs": "https://github.com/onflow/flow-interaction-template-tools",
   "keywords": [
-    "oclif"
+    "flix"
   ],
   "types": "dist/index.d.ts"
 }
