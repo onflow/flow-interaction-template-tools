@@ -7,7 +7,7 @@ import { verifySplashTitle } from "../../utils/splashscreen";
 
 export default class Generate extends Command {
   static description =
-    "Verify InteractionTemplate is audited by an auditor account.";
+    "Verify than an Interaction Template has been audited by an Auditor.";
 
   static examples = [
     `$ flowplate verify "./src/cadence/template.json" "0xABC123DEF456 `,

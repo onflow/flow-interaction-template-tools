@@ -9,7 +9,7 @@ import express from "express";
 import cors from "cors";
 
 export default class Generate extends Command {
-  static description = "Serve InteractionTemplate queryable by id.";
+  static description = "Serve Interaction Templates queryable by id.";
 
   static examples = [`$ flowplate serve ./src/templates`];
 

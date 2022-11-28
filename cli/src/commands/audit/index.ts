@@ -19,7 +19,7 @@ import { sign } from "../../utils/crypto/sign";
 import { signSendAuditTransaction } from "../../utils/audit/sign-send-audit-transaction";
 
 export default class Generate extends Command {
-  static description = "Generate transaction templates from .cdc files.";
+  static description = "Audit Interaction Template json files.";
 
   static examples = [`$ flowplate audit ./src/cadence`];
 

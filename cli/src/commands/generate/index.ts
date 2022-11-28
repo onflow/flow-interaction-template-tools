@@ -20,7 +20,7 @@ import { generateSplashTitle } from "../../utils/splashscreen";
 import { generatePins } from "../../questions/generate/generate-pins";
 
 export default class Generate extends Command {
-  static description = "Generate transaction templates from .cdc files.";
+  static description = "Generate Interaction Templates from .cdc files.";
 
   static examples = [`$ flowplate generate ./src/cadence`];
 
