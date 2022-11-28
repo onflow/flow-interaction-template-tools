@@ -17,7 +17,7 @@ $ npm install -g @onflow/flow-interaction-template-cli
 $ flix COMMAND
 running command...
 $ flix (--version)
-@onflow/flow-interaction-template-cli/0.1.0 darwin-arm64 node-v16.16.0
+@onflow/flow-interaction-template-cli/0.1.1 darwin-arm64 node-v16.16.0
 $ flix --help [COMMAND]
 USAGE
   $ flix COMMAND
@@ -33,7 +33,7 @@ USAGE
 
 ## `flix audit PATH`
 
-Generate transaction templates from .cdc files.
+Audit Interaction Template json files.
 
 ```
 USAGE
@@ -46,17 +46,17 @@ FLAGS
   -f, --flowJsonPath=<value>  Path to a flow.json configuration file.
 
 DESCRIPTION
-  Generate transaction templates from .cdc files.
+  Audit Interaction Template json files.
 
 EXAMPLES
   $ flowplate audit ./src/cadence
 ```
 
-_See code: [dist/commands/audit/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.0/dist/commands/audit/index.ts)_
+_See code: [dist/commands/audit/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.1/dist/commands/audit/index.ts)_
 
 ## `flix generate PATH`
 
-Generate transaction templates from .cdc files.
+Generate Interaction Templates from .cdc files.
 
 ```
 USAGE
@@ -69,17 +69,17 @@ FLAGS
   -f, --flowJsonPath=<value>  Path to a flow.json configuration file.
 
 DESCRIPTION
-  Generate transaction templates from .cdc files.
+  Generate Interaction Templates from .cdc files.
 
 EXAMPLES
   $ flowplate generate ./src/cadence
 ```
 
-_See code: [dist/commands/generate/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.0/dist/commands/generate/index.ts)_
+_See code: [dist/commands/generate/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.1/dist/commands/generate/index.ts)_
 
 ## `flix serve PATH [PORT]`
 
-Serve InteractionTemplate queryable by id.
+Serve Interaction Templates queryable by id.
 
 ```
 USAGE
@@ -90,17 +90,17 @@ ARGUMENTS
   PORT  Port to run on.
 
 DESCRIPTION
-  Serve InteractionTemplate queryable by id.
+  Serve Interaction Templates queryable by id.
 
 EXAMPLES
   $ flowplate serve ./src/templates
 ```
 
-_See code: [dist/commands/serve/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.0/dist/commands/serve/index.ts)_
+_See code: [dist/commands/serve/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.1/dist/commands/serve/index.ts)_
 
 ## `flix verify TEMPLATEPATH AUDITORADDRESS`
 
-Verify InteractionTemplate is audited by an auditor account.
+Verify that an Interaction Template has been audited by an Auditor.
 
 ```
 USAGE
@@ -114,11 +114,11 @@ FLAGS
   -f, --flowJsonPath=<value>  Path to a flow.json configuration file.
 
 DESCRIPTION
-  Verify InteractionTemplate is audited by an auditor account.
+  Verify that an Interaction Template has been audited by an Auditor.
 
 EXAMPLES
   $ flowplate verify "./src/cadence/template.json" "0xABC123DEF456
 ```
 
-_See code: [dist/commands/verify/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.0/dist/commands/verify/index.ts)_
+_See code: [dist/commands/verify/index.ts](https://github.com/onflow/flow-interaction-template-tools/blob/v0.1.1/dist/commands/verify/index.ts)_
 <!-- commandsstop -->
