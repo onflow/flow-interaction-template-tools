@@ -1,6 +1,6 @@
 {
   "name": "@onflow/flow-interaction-template-cli",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "Flow Interaction Template CLI",
   "license": "Apache-2.0",
   "author": "Dapper Labs <dev@dapperlabs.com>",
