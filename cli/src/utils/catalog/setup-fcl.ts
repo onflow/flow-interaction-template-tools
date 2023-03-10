@@ -91,9 +91,3 @@ export function setupTestnet() {
     }
   );
 }
-
-// if (process.env["FLOW_ENVIRONMENT"] === "mainnet") {
-//   setupMainnet()
-// } else {
-//   setupTestnet()
-// }
