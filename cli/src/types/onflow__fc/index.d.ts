@@ -3,6 +3,8 @@
 // Definitions by: Louis Guitton <https://github.com/louisguitton/>
 // Definitions: https://github.com/DefinitelyTyped/DefinitelyTyped
 
+declare module "@onflow/interaction-template-generators" {}
+
 declare module "@onflow/fcl" {
   export function payer(fn: any): any;
   export function proposer(fn: any): any;
