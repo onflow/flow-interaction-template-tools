@@ -1,4 +1,4 @@
-import { File } from "../file/read-files";
+import {File} from "../file/read-files"
 
 export interface iAuditMonad {
   flowJSON?: { [key: string]: any };
@@ -19,9 +19,9 @@ export interface iAuditMonad {
 
 export const generateAuditMonad = (
   file: File,
-  flowJSON?: { [key: string]: any }
+  flowJSON?: { [key: string]: any },
 ): iAuditMonad => ({
   flowJSON,
   file,
   templateId: JSON.parse(file.content).id,
-});
+})
