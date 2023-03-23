@@ -5,7 +5,6 @@ export async function writeFile(filePath: string, content: any): Promise<void> {
   return new Promise((res, rej) => {
     var dirname = path.dirname(filePath);
     if (!fs.existsSync(dirname)) {
-      console.log("making dir", dirname, filePath)
       fs.mkdirSync(dirname, {recursive: true});  
     }
 
